@@ -30,6 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Pobierz wiadomość sukcesu z parametru URL (jeśli istnieje)
+$success_msg = isset($_GET['message']) ? htmlspecialchars($_GET['message']) : null;
+
 if (!isset($_SESSION['username'])) {
 ?>
 <!doctype html>
@@ -79,6 +82,14 @@ if (!isset($_SESSION['username'])) {
 
               <h3 class="mb-5">Sign In</h3>
               
+              <!-- Wyświetlanie komunikatu o sukcesie resetowania hasła -->
+              <?php if ($success_msg) { ?>
+              <div class="alert alert-success" role="alert">
+                <?php echo $success_msg; ?>
+              </div>
+              <?php } ?>
+
+              <!-- Wyświetlanie błędu logowania -->
               <?php if (isset($msg)) { ?>
               <div class="alert alert-danger" role="alert">
                 <?php echo $msg; ?>
