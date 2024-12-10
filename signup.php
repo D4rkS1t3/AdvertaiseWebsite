@@ -2,6 +2,10 @@
 session_start();
 require 'db.php'; // Połączenie z bazą danych
 
+if (isset($_SESSION['session_id'])) {
+  header("Location: index.php");
+  exit();
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
@@ -16,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = "You must accept the terms and conditions to register!";
     } elseif ($password !== $confirm_password) {
         $msg = "Passwords do not match!";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL))
+    {
+        $msg = "Invalid email";
     } else {
         // Sprawdź, czy użytkownik już istnieje
         $query = $db->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
@@ -28,8 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Hashowanie hasła
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-            // Wstawienie użytkownika do bazy danych
             $insert = $db->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
             $insert->bindParam(':username', $username);
             $insert->bindParam(':email', $email);

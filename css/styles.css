@@ -9121,7 +9121,7 @@ textarea.form-control-lg {
     margin-bottom: auto !important;
   }
   .ms-md-0 {
-    margin-left: 0 !important;
+    margin-left: auto !important;
   }
   .ms-md-1 {
     margin-left: 0.25rem !important;
@@ -10867,7 +10867,7 @@ body {
   flex-shrink: 0;
   transition: transform 0.15s ease-in-out;
   z-index: 1038;
-  transform: translateX(-225px);
+  /* transform: translateX(-225px); */
 }
 #layoutSidenav #layoutSidenav_content {
   position: relative;
@@ -10931,6 +10931,7 @@ body {
 }
 .sb-nav-fixed #layoutSidenav #layoutSidenav_content {
   padding-left: 225px;
+  padding-right: 225px;
   top: 56px;
 }
 

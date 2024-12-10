@@ -2,38 +2,62 @@
 session_start();
 require 'db.php'; // Połączenie z bazą danych
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $identifier = trim($_POST['identifier']); // Może być login lub email
-    $password = trim($_POST['password']);
-
-    // Walidacja backendowa
-    if (empty($identifier) || empty($password)) {
-        $msg = "Username/Email and password are required!";
-    } else {
-        // Zapytanie sprawdzające zarówno username, jak i email
-        $query = $db->prepare("SELECT * FROM users WHERE username = :identifier OR email = :identifier");
-        $query->bindParam(':identifier', $identifier);
-        $query->execute();
-
-        if ($query->rowCount() === 1) {
-            $details = $query->fetch(PDO::FETCH_ASSOC);
-            if (password_verify($password, $details['password'])) {
-                $_SESSION['username'] = $details['username'];
-                header("Location: dashboard.php"); // Przekierowanie na stronę użytkownika
-                exit();
-            } else {
-                $msg = "Incorrect password.";
-            }
-        } else {
-            $msg = "That username or email does not exist!";
-        }
-    }
+// Jeśli użytkownik jest zalogowany, przekieruj na dashboard.php
+if (isset($_SESSION['session_id'])) {
+    header("Location: index.php");
+    exit();
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $identifier = trim($_POST['identifier']); // Może być login lub email
+  $password = trim($_POST['password']);
+
+  // Walidacja backendowa
+  if (empty($identifier) || empty($password)) {
+      $msg = "Username/Email and password are required!";
+  } else {
+      // Sprawdź, czy `identifier` to e-mail
+      if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+          // `identifier` jest adresem e-mail
+          $query = $db->prepare("SELECT * FROM users WHERE email = :identifier");
+      } else {
+          // `identifier` jest loginem
+          $query = $db->prepare("SELECT * FROM users WHERE username = :identifier");
+      }
+
+      // Wykonaj zapytanie
+      $query->bindParam(':identifier', $identifier);
+      $query->execute();
+
+      if ($query->rowCount() === 1) {
+          $details = $query->fetch(PDO::FETCH_ASSOC);
+
+          // Sprawdzenie hasła
+          if (password_verify($password, $details['password'])) {
+              $_SESSION['session_id'] = bin2hex(random_bytes(32));
+              $userId = $details['id'];
+
+              // Aktualizacja session_id w bazie
+              $update = $db->prepare("UPDATE users SET session_id = :session_id WHERE id = :id");
+              $update->bindParam(':session_id', $_SESSION['session_id']);
+              $update->bindParam(':id', $userId);
+              $update->execute();
+
+              // Przekierowanie po zalogowaniu
+              header("Location: index.php");
+              exit();
+          } else {
+              $msg = "Incorrect password.";
+          }
+      } else {
+          $msg = "That username or email does not exist!";
+      }
+  }
+}
+
 
 // Pobierz wiadomość sukcesu z parametru URL (jeśli istnieje)
 $success_msg = isset($_GET['message']) ? htmlspecialchars($_GET['message']) : null;
-
-if (!isset($_SESSION['username'])) {
 ?>
 <!doctype html>
 <html lang="en">
@@ -140,6 +164,3 @@ if (!isset($_SESSION['username'])) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
-<?php
-}
-?>

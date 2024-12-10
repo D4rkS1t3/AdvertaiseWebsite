@@ -1,0 +1,51 @@
+#btn-add
+{
+    height: 90%;
+    display: flex;           /* Ustawiamy Flexbox */
+    align-items: center;     /* Wyrównanie pionowe */
+    justify-content: center;
+    margin-right: 17%;
+
+}
+
+#navFirst
+{
+    margin-left: 230px;
+}
+.sb-topnav .navbar-brand {
+    width: auto;
+    margin: 0;
+  }
+@media (max-width: 990px) {
+
+    #navFirst
+    {
+        margin-left: auto;
+    }
+}
+#btn-add span {
+    /* color:var(--bs-navbar-hover-color); */
+    /* background-color: rgb(120, 52, 52); */
+    color: var(--bs-dark-rgb);
+}
+
+@media (max-width: 1050px) {
+    #btn-add {
+        margin-right: auto;
+    }
+}
+@media (max-width: 650px) {
+    #btn-add {
+        font-size: 15px; /* Mniejszy rozmiar czcionki dla małych ekranów */
+
+    }
+}
+
+
+@media (max-width: 992px) {
+    #layoutSidenav_content {
+        padding-right: 0% !important;
+    }
+}
+
+
