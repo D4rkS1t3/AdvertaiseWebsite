@@ -9,148 +9,18 @@ if (!isset($_SESSION['session_id'])) {
 
 $sessionID = $_SESSION['session_id'];
 
-$query = $db->prepare("SELECT * FROM users WHERE session_id = :session_id");
-$query->bindParam(':session_id', $sessionID);
-$query->execute();
-$row = $query->fetch(PDO::FETCH_ASSOC);
 
-if (!$row) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Incorrect session."
-    ]);
+try {
+    $query = $db->prepare("SELECT id, name FROM categories");
+    $query->execute();
+    $categories = $query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Błąd podczas pobierania kategorii: " . $e->getMessage();
     exit();
 }
 
-$oldUsername = $row['username'];
-$oldEmail = $row['email'];
-$newUsername = '';
-$newEmail = '';
 
 
-//wejscie w ustawienia zeby byly juz uzupelniony login i email
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $newUsername = $oldUsername;
-    $newEmail = $oldEmail;
-}
-
-
-//usuwanie konta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'deleteAccount') {
-    $postPassword = trim($_POST['password']);
-
-    if (empty($postPassword)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Entering your password is required to delete your account."
-        ]);
-        exit();
-    }
-
-    if (!password_verify($postPassword, $row['password'])) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Incorrect password!"
-        ]);
-        exit();
-    }
-
-    try {
-        $delete = $db->prepare("DELETE FROM users WHERE session_id = :session_id");
-        $delete->bindParam(':session_id', $sessionID);
-
-        if ($delete->execute()) {
-            session_destroy();
-            echo json_encode([
-                "success" => true,
-                "message" => "Your account has been deleted!",
-                "redirect" => "signin.php"
-            ]);
-            exit();
-        } else {
-            echo json_encode([
-                "success" => false,
-                "message" => "An error occurred while deleting your account!"
-            ]);
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Error:" . $e->getMessage()
-        ]);
-        exit();
-    }
-}
-
-
-
-//edycja uzytkownika
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'editAccount') {
-    $postUsername = trim($_POST['username']);
-    $postEmail = trim($_POST['email']);
-    $postOldPassword = trim($_POST['oldPassword']);
-    $postNewPassword = trim($_POST['newPassword']);
-    $repeatNewPassword = trim($_POST['repeatNewPassword']);
-    if (empty($postUsername) || empty($postEmail) || empty($postOldPassword) || empty($postNewPassword)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "All fields are required"
-        ]);
-        exit();
-    } elseif (!filter_var($postEmail, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Invalid e-mail!"
-        ]);
-        exit();
-    } elseif ($postNewPassword !== $repeatNewPassword) {
-        echo json_encode([
-            "success" => false,
-            "message" => "New passwords must match!"
-        ]);
-        exit();
-    } elseif (!password_verify($postOldPassword, $row['password'])) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Current password is incorrect!"
-        ]);
-        exit();
-    } else {
-        try {
-            $hashedPassword = password_hash($postNewPassword, PASSWORD_BCRYPT);
-            $update = $db->prepare("
-                UPDATE users 
-                SET username = :username, email = :email, password = :password 
-                WHERE session_id = :session_id
-            ");
-            $update->bindParam(':username', $postUsername);
-            $update->bindParam(':email', $postEmail);
-            $update->bindParam(':password', $hashedPassword);
-            $update->bindParam(':session_id', $sessionID);
-            if ($update->execute()) {
-                echo json_encode([
-                    "success" => true,
-                    "message" => "Your password has been changed",
-                    "redirect" => "dashboard.php"
-                ]);
-                exit();
-            } else {
-                echo json_encode([
-                    "success" => false,
-                    "message" => "Error changing password."
-                ]);
-                exit();
-            }
-        } catch (PDOException $e) {
-            echo json_encode([
-                "success" => false,
-                "message" => "Error: " . $e->getMessage()
-            ]);
-            exit();
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -255,11 +125,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         margin-top: 196px;
         border: 4px solid #f3f3f3;
     }
+
     @media (min-width: 768px) {
-    .col-sm-9 {
-        width: 69% !important;
+        .col-sm-9 {
+            width: 69% !important;
+        }
     }
-}
 </style>
 
 
@@ -302,94 +173,141 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             <!-- Main Content -->
             <main class="col-md-8 bg-light">
-                <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
                 <div class="container bootstrap snippets bootdeys">
                     <div class="row">
                         <div class="col-xs-12 col-sm-9">
+                            <h3>Add announcement</h3>
                             <div id="message" class="alert" style="display: none;"></div>
-                            <form id="editAccountForm" method="POST" action="accountSett.php" class="form-horizontal">
-                                <div class="panel panel-default">
-                                    <div class="panel-body text-center">
-                                        <img src="./img/account-icon-template-vector.jpg" class="img-circle profile-avatar" alt="User avatar">
-                                    </div>
-                                </div>
+
+                            <form id="editAccountForm" method="POST" enctype="multipart/form-data" action="accountSett.php" class="form-horizontal">
+                                <!-- tytul kat -->
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <h4 class="panel-title">Security</h4>
+                                        <br>
+                                        <h3 class="panel-title">The more details the better!</h3>
                                     </div>
                                     <div class="panel-body">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label">Username</label>
+                                            <label class="col-sm-2 control-label">Title of the ad:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" id="username" name="username" class="form-control" value="<?= $newUsername ?>" required>
+                                                <input type="text" id="title" name="title" class="form-control" placeholder="Iphone 11" required>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label">Email</label>
+                                            <label class="col-sm-2 control-label">Category</label>
                                             <div class="col-sm-10">
-                                                <input type="email" id="email" name="email" class="form-control" value="<?= $newEmail ?>" required>
+                                                <select id="category" name="category" class="form-control" required>
+                                                    <option value="">Choose category</option>
+                                                    <?php foreach ($categories as $category): ?>
+                                                        <option value="<?= htmlspecialchars($category['id']) ?>">
+                                                            <?= htmlspecialchars($category['name']) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <!-- image -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <br>
+                                        <h3 class="panel-title">Images</h3>
+                                    </div>
+                                    <div class="panel-body">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label">Current password</label>
+                                            <label class="col-sm-2 control-label">Upload Images:</label>
                                             <div class="col-sm-10">
-                                                <input type="password" id="oldPassword" name="oldPassword" class="form-control" placeholder="old password" required>
+                                                <input type="file" id="images" name="images[]" class="form-control" accept="image/*" multiple required>
+                                                <small>You can add max 5 photos.</small>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">New password</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="new password" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Repeat new pass</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="repeatNewPassword" name="repeatNewPassword" class="form-control" placeholder="repeat new password" required>
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
 
+                                <!-- opis -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <br>
+                                        <h3 class="panel-title">Description</h3>
+                                    </div>
+                                    <div class="panel-body">
                                         <div class="form-group">
-                                            <div class="col-sm-10 col-sm-offset-2">
-                                                <button id="submit" type="button" class="btn btn-primary">Submit</button>
-                                                <button id="reset" type="reset" class="btn btn-default">Reset</button>
+                                            <label for="description" class="col-sm-2 control-label">Opis</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="description" name="description" class="form-control" rows="6"
+                                                    placeholder="Enter any information that would be important to you when viewing such an advertisement."
+                                                    maxlength="9000" required></textarea>
+                                                <small id="descriptionHelp" class="form-text text-muted">
+                                                    Please enter at least 40 characters. <span id="charCount">0</span>/9000
+                                                </small>
+                                                <div id="descriptionError" class="text-danger" style="display: none;">
+                                                    Description is too short. Add more details.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- lokalizacja -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <br>
+                                        <h3 class="panel-title">Location</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">location:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="location" name="location" class="form-control" placeholder="Warsaw" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- osoba,email,tel -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <br>
+                                        <h3 class="panel-title">Contact details</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Contact person:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="contactPerson" name="contactPerson" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Email:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="email" name="email" class="form-control" value="example@example.com" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Phone number:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- przyciski -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <div  class="col-sm-10  col-sm-offset-2 text-right">
                                                 <button id="cancel" type="button" class="btn btn-default">Cancel</button>
+                                                <button id="submit" type="button" class="btn btn-primary">Add an advertisement</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                             </form>
-
-                            <!-- usuwanie konta -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">Delete Account</h4>
-                                </div>
-                                <div class="panel-body">
-                                    <div id="deleteMessage" class="alert" style="display: none;"></div>
-                                    <form id="deleteAccountForm" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="password" class="col-sm-2 control-label">Password</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="deletePassword" class="form-control" placeholder="Enter your password" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="password" class="col-sm-2 control-label">Repeat password</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="repeatDeletePassword" class="form-control" placeholder="Repeat your password" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-10 col-sm-offset-2">
-                                                <button id="deleteAccount" type="button" class="btn btn-danger">Delete Account</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
 
 
                         </div>
@@ -542,6 +460,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 
 
+        });
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const descriptionInput = document.getElementById('description');
+            const charCount = document.getElementById('charCount');
+            const descriptionError = document.getElementById('descriptionError');
+
+            // Aktualizacja licznika znaków
+            descriptionInput.addEventListener('input', function() {
+                const length = descriptionInput.value.length;
+                charCount.textContent = length;
+
+                // Sprawdź, czy opis ma co najmniej 40 znaków
+                if (length < 40) {
+                    descriptionError.style.display = 'block';
+                } else {
+                    descriptionError.style.display = 'none';
+                }
+            });
+
+            // Walidacja przed przesłaniem formularza
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                if (descriptionInput.value.length < 40) {
+                    e.preventDefault();
+                    descriptionError.style.display = 'block';
+                    alert('Opis musi zawierać przynajmniej 40 znaków.');
+                }
+            });
         });
     </script>
 

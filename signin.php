@@ -9,50 +9,50 @@ if (isset($_SESSION['session_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $identifier = trim($_POST['identifier']); // Może być login lub email
-  $password = trim($_POST['password']);
+    $identifier = trim($_POST['identifier']); // Może być login lub email
+    $password = trim($_POST['password']);
 
-  // Walidacja backendowa
-  if (empty($identifier) || empty($password)) {
-      $msg = "Username/Email and password are required!";
-  } else {
-      // Sprawdź, czy `identifier` to e-mail
-      if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-          // `identifier` jest adresem e-mail
-          $query = $db->prepare("SELECT * FROM users WHERE email = :identifier");
-      } else {
-          // `identifier` jest loginem
-          $query = $db->prepare("SELECT * FROM users WHERE username = :identifier");
-      }
+    // Walidacja backendowa
+    if (empty($identifier) || empty($password)) {
+        $msg = "Username/Email and password are required!";
+    } else {
+        // Sprawdź, czy `identifier` to e-mail
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            // `identifier` jest adresem e-mail
+            $query = $db->prepare("SELECT * FROM users WHERE email = :identifier");
+        } else {
+            // `identifier` jest loginem
+            $query = $db->prepare("SELECT * FROM users WHERE username = :identifier");
+        }
 
-      // Wykonaj zapytanie
-      $query->bindParam(':identifier', $identifier);
-      $query->execute();
+        // Wykonaj zapytanie
+        $query->bindParam(':identifier', $identifier);
+        $query->execute();
 
-      if ($query->rowCount() === 1) {
-          $details = $query->fetch(PDO::FETCH_ASSOC);
+        if ($query->rowCount() === 1) {
+            $details = $query->fetch(PDO::FETCH_ASSOC);
 
-          // Sprawdzenie hasła
-          if (password_verify($password, $details['password'])) {
-              $_SESSION['session_id'] = bin2hex(random_bytes(32));
-              $userId = $details['id'];
+            // Sprawdzenie hasła
+            if (password_verify($password, $details['password'])) {
+                $_SESSION['session_id'] = bin2hex(random_bytes(32));
+                $userId = $details['id'];
 
-              // Aktualizacja session_id w bazie
-              $update = $db->prepare("UPDATE users SET session_id = :session_id WHERE id = :id");
-              $update->bindParam(':session_id', $_SESSION['session_id']);
-              $update->bindParam(':id', $userId);
-              $update->execute();
+                // Aktualizacja session_id w bazie
+                $update = $db->prepare("UPDATE users SET session_id = :session_id WHERE id = :id");
+                $update->bindParam(':session_id', $_SESSION['session_id']);
+                $update->bindParam(':id', $userId);
+                $update->execute();
 
-              // Przekierowanie po zalogowaniu
-              header("Location: index.php");
-              exit();
-          } else {
-              $msg = "Incorrect password.";
-          }
-      } else {
-          $msg = "That username or email does not exist!";
-      }
-  }
+                // Przekierowanie po zalogowaniu
+                header("Location: index.php");
+                exit();
+            } else {
+                $msg = "Incorrect password.";
+            }
+        } else {
+            $msg = "That username or email does not exist!";
+        }
+    }
 }
 
 

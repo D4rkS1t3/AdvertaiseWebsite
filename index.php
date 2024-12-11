@@ -31,7 +31,7 @@
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" id="navFirst" href="index.html">Advertise Website</a>
+        <a class="navbar-brand ps-3" id="navFirst" href="index.php">Advertise Website</a>
         <!-- Sidebar Toggle-->
 
 
@@ -42,16 +42,16 @@
                 <a style="text-decoration: none;" class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="ms-2">Your account</span><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#!">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                    <li><a class="dropdown-item" href="./accountSett.php">Settings</a></li>
+                    <li><a class="dropdown-item" href="./dashboard.php">My advertise</a></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    <li><a class="dropdown-item" href="./logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
-        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = '404.html';">
+        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAdvertise.php';">
             <span class="ms-2">Add an advertisement</span></button>
     </nav>
 

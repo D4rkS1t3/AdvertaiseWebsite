@@ -22,71 +22,24 @@ if (!$row) {
     exit();
 }
 
+
+
+
 $oldUsername = $row['username'];
 $oldEmail = $row['email'];
 $newUsername = '';
 $newEmail = '';
 
-
-//wejscie w ustawienia zeby byly juz uzupelniony login i email
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $newUsername = $oldUsername;
     $newEmail = $oldEmail;
 }
 
 
-//usuwanie konta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'deleteAccount') {
-    $postPassword = trim($_POST['password']);
-
-    if (empty($postPassword)) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Entering your password is required to delete your account."
-        ]);
-        exit();
-    }
-
-    if (!password_verify($postPassword, $row['password'])) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Incorrect password!"
-        ]);
-        exit();
-    }
-
-    try {
-        $delete = $db->prepare("DELETE FROM users WHERE session_id = :session_id");
-        $delete->bindParam(':session_id', $sessionID);
-
-        if ($delete->execute()) {
-            session_destroy();
-            echo json_encode([
-                "success" => true,
-                "message" => "Your account has been deleted!",
-                "redirect" => "signin.php"
-            ]);
-            exit();
-        } else {
-            echo json_encode([
-                "success" => false,
-                "message" => "An error occurred while deleting your account!"
-            ]);
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Error:" . $e->getMessage()
-        ]);
-        exit();
-    }
-}
 
 
 
-//edycja uzytkownika
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'editAccount') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postUsername = trim($_POST['username']);
     $postEmail = trim($_POST['email']);
     $postOldPassword = trim($_POST['oldPassword']);
@@ -255,11 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         margin-top: 196px;
         border: 4px solid #f3f3f3;
     }
-    @media (min-width: 768px) {
-    .col-sm-9 {
-        width: 69% !important;
-    }
-}
 </style>
 
 
@@ -307,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     <div class="row">
                         <div class="col-xs-12 col-sm-9">
                             <div id="message" class="alert" style="display: none;"></div>
-                            <form id="editAccountForm" method="POST" action="accountSett.php" class="form-horizontal">
+                            <form method="POST" action="accountSett.php" class="form-horizontal">
                                 <div class="panel panel-default">
                                     <div class="panel-body text-center">
                                         <img src="./img/account-icon-template-vector.jpg" class="img-circle profile-avatar" alt="User avatar">
@@ -360,38 +308,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                 </div>
 
                             </form>
-
-                            <!-- usuwanie konta -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">Delete Account</h4>
-                                </div>
-                                <div class="panel-body">
-                                    <div id="deleteMessage" class="alert" style="display: none;"></div>
-                                    <form id="deleteAccountForm" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="password" class="col-sm-2 control-label">Password</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="deletePassword" class="form-control" placeholder="Enter your password" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="password" class="col-sm-2 control-label">Repeat password</label>
-                                            <div class="col-sm-10">
-                                                <input type="password" id="repeatDeletePassword" class="form-control" placeholder="Repeat your password" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-10 col-sm-offset-2">
-                                                <button id="deleteAccount" type="button" class="btn btn-danger">Delete Account</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-
-
                         </div>
                     </div>
                 </div>
@@ -430,12 +346,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 var repeatNewPassword = $("#repeatNewPassword").val();
 
                 // Prosta walidacja po stronie klienta
-                if (username === "" || email === "" || oldPassword === "" || newPassword === "" || repeatNewPassword === "") {
-                    $("#message").text("Please complete all fields!").removeClass("alert-success").addClass("alert-danger").show();
-                    return;
+                if (username === "" || email === "" || oldPassword === ""|| newPassword === "" || repeatNewPassword === "") {
+                    $("#message").text("Please complete all fields!").removeClass("alert-success").addClass("alert-danger").show();                    return;
                 }
                 if (newPassword !== repeatNewPassword) {
-                    $("#message").text("Password must match!").removeClass("alert-success").addClass("alert-danger").show();
+                    $("#message").text("Password must match!").removeClass("alert-success").addClass("alert-danger").show();                    return;
                     return;
                 }
 
@@ -445,7 +360,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     type: 'POST', // Metoda HTTP
                     dataType: 'json',
                     data: {
-                        action: 'editAccount',
                         username: username,
                         email: email,
                         oldPassword: oldPassword,
@@ -456,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         // Wyświetl komunikat zwrotny
                         if (response.success) {
                             $("#message").text(response.message).removeClass("alert-danger").addClass("alert-success").show();
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 window.location.href = response.redirect;
                             }, 3000);
                         } else {
@@ -492,52 +406,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     // Jeśli użytkownik kliknie "OK", przekierowanie na dashboard
                     window.location.href = "dashboard.php";
                 }
-            });
-
-
-
-            $("#deleteAccount").click(function() {
-                if (!confirm("Czy na pewno chcesz usunąć swoje konto? Tego procesu nie można cofnąć!")) {
-                    return;
-                }
-
-                var password = $("#deletePassword").val();
-                var repeatPassword = $("#repeatDeletePassword").val();
-
-                if (password === "" || repeatPassword === "") {
-                    $("#deleteMessage").text("Passwords are required!!!").removeClass("alert-success").addClass("alert-danger").show();
-                    return;
-                }
-
-                if (password !== repeatPassword) {
-                    $("#deleteMessage").text("Passwords must match!!!").removeClass("alert-success").addClass("alert-danger").show();
-                    return;
-                }
-
-                $.ajax({
-                    url: 'accountSett.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'deleteAccount',
-                        password: password
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            $("#deleteMessage").text(response.message).removeClass("alert-danger").addClass("alert-success").show();
-                            setTimeout(function() {
-                                window.location.href = response.redirect;
-                            }, 3000);
-                        } else {
-                            $("#deleteMessage").text(response.message).removeClass("alert-success").addClass("alert-danger").show();
-
-                        }
-                    },
-                    error: function() {
-                        $("#deleteMessage").text("Server error!").removeClass("alert-success").addClass("alert-danger").show();
-
-                    }
-                });
             });
 
 
