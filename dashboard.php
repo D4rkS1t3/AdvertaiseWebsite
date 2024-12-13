@@ -51,7 +51,7 @@
                 </ul>
             </li>
         </ul>
-        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAdvertise.php';">
+        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAnnounView.php';">
             <span class="ms-2">Add an advertisement</span></button>
     </nav>
 

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Find advertisement</title>
+    <title>Your advertisement</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
 
@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="css/mojestyle.css" rel="stylesheet" />
 </head>
 <style>
@@ -22,6 +23,80 @@
         padding-top: 47px;
         /* Przesuwa zawartość w dół o wysokość navbar */
         margin: 0;
+    }
+
+    /*search box css start here*/
+    .search-sec {
+        padding: 2rem;
+    }
+
+    .search-slt {
+        display: block;
+        width: 100%;
+        height: 72px;
+        font-size: 1.25rem;
+        line-height: 1.5;
+        color: #55595c;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        height: calc(5rem + 5px) !important;
+        border-radius: 0;
+    }
+
+    .btn-search {
+        width: 100%;
+        font-size: 16px;
+        font-weight: 400;
+        text-transform: capitalize;
+        height: calc(5rem + 5px) !important;
+        border-radius: 2%;
+        background-color: var(--bs-body-color);
+        color: white !important;
+    }
+
+    .btn-search:hover {
+
+        background-color: rgb(21 106 191) !important;
+        color: white !important;
+    }
+
+    @media (min-width: 992px) {
+        .search-sec {
+            position: relative;
+            top: -114px;
+            background: rgba(26, 70, 104, 0.51);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .search-sec {
+            background: #1A4668;
+        }
+    }
+
+    .social-icons {
+        margin: 20px 0;
+    }
+
+    .social-icons h4 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .social-link {
+        display: inline-block;
+        margin: 0 10px;
+        font-size: 24px;
+        color: #555;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .social-link:hover {
+        color: #007bff;
+        /* Kolor na hover (np. niebieski) */
     }
 </style>
 
@@ -51,7 +126,7 @@
                 </ul>
             </li>
         </ul>
-        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAdvertise.php';">
+        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAnnounView.php';">
             <span class="ms-2">Add an advertisement</span></button>
     </nav>
 
@@ -65,95 +140,169 @@
 
             <!-- Main Content -->
             <main class="col-md-8 bg-light">
-                <br>
-                <h3 class="mt-4">Your Advertisement</h3>
-                <br>
-                <div style="background-color: rgb(206, 221, 255);font-size:10px" class="panel panel-default">
-                    <strong style="padding: 10px;">Attention</strong>
-                    <div class="panel-body">The process of buying and selling through Shipments Advertisement takes place in your Advertisment account. Ignore links sent outside the portal, e.g. via Whatsapp. Read more on our Blog.</div>
-                </div>
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-light">Active</a>
-                    <a href="#" class="btn btn-light">Unactive</a>
-                </div>
-
-                <!-- Content Cards -->
-
-
-                <div style="width: 100%;" class="container my-4">
-                    <div class="row">
-
-
-                        <!-- Card 1 -->
-                        <div class="mb-3">
-                            <div class="card featured p-3">
-                                <div class="row">
-                                    <div class="col-md-2 text-center">
-                                        <img src="https://via.placeholder.com/100x100" alt="Image" class="img-fluid rounded">
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h5 class="card-title">Tribute to Dirty Dancing 2x Bilety Częstochowa</h5>
-                                        <p style="margin-top: 7%; font-size:9px" class="text-muted">Dąbrowa Górnicza - 05 grudnia 2024</p>
-                                    </div>
-                                    <div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
-                                        <span class="price">60 zł</span>
-                                        <div style="margin-top:10px;" class="actions">
-                                            <button class="btn btn-sm btn-primary" (click)="onEdit(task)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" (click)="onDelete(task)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <i class="bi bi-heart heart-icon"></i>
-                                    </div>
-                                </div>
+                <!-- wyszukiwanie -->
+                <div style="padding: 30px 0;" class="col-md-12 bg-light>
+                    <form action=" #" method="post" novalidate="novalidate">
+                    <div class=" justify-content-center align-items-center">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-8 col-sm-8 p-0">
+                                <input type="text" class="form-control search-slt" placeholder="Find something for you!">
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 p-0">
+                                <input type="text" class="form-control search-slt" placeholder="Location">
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 p-0">
+                                <button type="button" class="btn btn-light btn-search">Search</button>
                             </div>
                         </div>
 
+                    </div>
+                    </form>
+                </div>
+                <!-- kategorie -->
 
-                        <!-- Card 1 -->
-                        <div class="mb-3">
-                            <div class="card featured p-3">
-                                <div class="row">
-                                    <div class="col-md-2 text-center">
-                                        <img src="https://via.placeholder.com/100x100" alt="Image" class="img-fluid rounded">
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h5 class="card-title">Tribute to Dirty Dancing 2x Bilety Częstochowa</h5>
-                                        <p style="margin-top: 7%; font-size:9px" class="text-muted">Dąbrowa Górnicza - 05 grudnia 2024</p>
-                                    </div>
-                                    <div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
-                                        <span class="price">60 zł</span>
-                                        <div style="margin-top:10px;" class="actions">
-                                            <button class="btn btn-sm btn-primary" (click)="onEdit(task)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" (click)="onDelete(task)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <i class="bi bi-heart heart-icon"></i>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="col-md-12 bg-light">
+
+                    <h2 style="text-align: center;">Main categories</h2>
+                    <div class="mt-5">
+                        <div class="row">
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
+                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
+                                    <p>Elektronika</p>
+                                </a></div>
                         </div>
-
-
-
-                        <!-- Add more cards as needed -->
                     </div>
                 </div>
+
+                <!-- promowane -->
+
+                <div class="col-md-12 bg-light">
+
+                    <h2 style="margin:5% 0%;text-align: center;">Promoted Ads</h2>
+                    <div class="mt-5">
+                        <div class="row">
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6 col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6  col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- pierwszy ele -->
+
+                            <div class="col-6 col-lg-3 mb-5">
+                                <a style="text-decoration: none;" href="">
+                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+                                    <div>
+                                        <div class="m-4">
+                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
+                                            <p><b>255,15zl</b></p>
+                                        </div>
+                                        <div class="m-4">
+                                            <small style="font-size: 10px;">Grójec</small><br>
+                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
             </main>
 
             <!-- Right Sidebar (Empty) -->
@@ -161,143 +310,64 @@
         </div>
     </div>
 
-    
+    <!-- promocja -->
+
+    <div style="background-color: #cbf7ee; min-height: 200px;" class="promo">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mt-5" style="text-align: center; align-items: center;font-size:12px;">
+                    <div class="col-12 mb-5"><img style="height: 50px; width:200px;" src="./img/logo.PNG" alt=""></div>
+                    <div class="col-12 my-5">
+                        <span>
+                            advertise.pl is a free local classified ad in the following categories: Fashion, Animals, For Children, Sports and Hobbies, Music and Education.
+                            You will quickly find interesting ads here and easily contact the advertiser. Office work, apartments, rooms, cars are waiting for you on advertise.pl.
+                            If you want to sell something - you can easily add free ads. If you want to buy something - you will find interesting opportunities here, cheaper than in a store. Sell in the neighborhood on advertise.pl
+                        </span>
+                    </div>
+                    <div class="social-icons my-5 col-12 text-center">
+                        <h4>Join us</h4>
+                        <a href="https://facebook.com" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategorie i popularne wyszukiwania -->
+    <div class="bg-light" style="min-height: 200px;" class="popular">
+        <div class="container">
+            <div class="row my-5 text-center">
+                <!-- Pierwsza kolumna -->
+                <div class="col-6">
+                    <div class="mb-3" style="align-items: center;"><img style="height:100px; width:100px" src="./img/1.svg" alt=""></div>
+                    <div class="m-4" style="font-size:12px;">
+                        <span>
+                        Main Categories: Antiques & CollectiblesBusiness & IndustryAutomotiveReal EstateWorkHome & GardenElectronicsFashionFarmingAnimalsFor KidsSports & HobbiesMusic & EducationHealth & BeautyServicesAccommodationRentalI'll Give Away for Free                        </span>
+                    </div>
+                </div>
+
+                <!-- Druga kolumna -->
+                <div class="col-6">
+                    <div class="mb-3" style="align-items: center;"><img style="height:100px; width:100px" src="./img/2.svg" alt=""></div>
+                    <div class="m-4" style="font-size:12px;"><span>
+                    Popular searches: passenger carsrenault capturused carspassenger carskia ceedhyundai i20hyundai i30hyundai ix35bmw x1ford kugavw tiguankia sportagepeugeot 3008hyundai tucsonnissan qashqaitoyota corollatoyota aurisnissan jukeaudi q5volvo xc60                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-5 mt-auto">
         &copy; 2024 Advertise Website
     </footer>
-
-    <div id="editProductModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form enctype="multipart/form-data">
-                <div class="modal-header">						
-                    <h4 class="modal-title">Edit advertise</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">					
-                    <div class="form-group">
-                        <label>Image</label>
-                        <input type="file" class="form-control" accept="image/*" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Price</label>
-                        <input type="number" class="form-control" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Lokalizacja</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select class="form-control" required>
-                            <option value="">Select Category</option>
-                            <option value="1">Electronics</option>
-                            <option value="2">Clothing</option>
-                            <option value="3">Furniture</option>
-                            <option value="4">Toys</option>
-                            <option value="5">Books</option>
-                            <option value="6">Sports</option>
-                            <option value="7">Home Appliances</option>
-                            <option value="8">Health & Beauty</option>
-                            <option value="9">Food & Beverages</option>
-                            <option value="10">Jewelry</option>
-                        </select>
-                    </div>					
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- addd modal -->
-<div id="addProductModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form enctype="multipart/form-data">
-                <div class="modal-header">						
-                    <h4 class="modal-title">Add advertise</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">					
-                    <div class="form-group">
-                        <label>Image</label>
-                        <input type="file" class="form-control" accept="image/*" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Price</label>
-                        <input type="number" class="form-control" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Lokalizacja</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select class="form-control" required>
-                            <option value="">Select Category</option>
-                            <option value="1">Electronics</option>
-                            <option value="2">Clothing</option>
-                            <option value="3">Furniture</option>
-                            <option value="4">Toys</option>
-                            <option value="5">Books</option>
-                            <option value="6">Sports</option>
-                            <option value="7">Home Appliances</option>
-                            <option value="8">Health & Beauty</option>
-                            <option value="9">Food & Beverages</option>
-                            <option value="10">Jewelry</option>
-                        </select>
-                    </div>					
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Modal HTML -->
-<div id="deleteEmployeeModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form>
-				<div class="modal-header">						
-					<h4 class="modal-title">Delete Advertise</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<p>Are you sure you want to delete these Records?</p>
-					<p class="text-warning"><small>This action cannot be undone.</small></p>
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-					<input type="submit" class="btn btn-danger" value="Delete">
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
 
 
 
@@ -308,31 +378,22 @@
     <script src="assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
-</body>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-</html>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-</div>
-</div>
-</div>
-</div>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
 
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin-2.min.js"></script>
-
-<!-- Page level plugins -->
-<script src="vendor/chart.js/Chart.min.js"></script>
-
-<!-- Page level custom scripts -->
-<script src="js/demo/chart-area-demo.js"></script>
-<script src="js/demo/chart-pie-demo.js"></script>
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
 
