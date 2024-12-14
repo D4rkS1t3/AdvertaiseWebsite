@@ -62,11 +62,13 @@ if (!is_numeric($price) || $price < 0) {
 }
 
 // Obsługa plików (jeśli przesłane)
-$uploadedImages = [];
+$uploadedImages = ['noImage.jpg'];
 $uploadDir = 'uploads/';
 $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
 
 if (!empty($_FILES['images']['name'][0])) {
+    $uploadedImages = [];
+
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
@@ -90,7 +92,7 @@ if (!empty($_FILES['images']['name'][0])) {
             exit();
         }
     }
-}
+} 
 
 // Zapis ogłoszenia do bazy danych
 try {

@@ -1,3 +1,38 @@
+<?php
+session_start();
+require 'db.php';
+
+//pobranie kategorii
+try {
+    $query = $db->prepare("SELECT id, name FROM categories");
+    $query->execute();
+    $categories = $query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
+    exit();
+}
+//losowe ogloszenia do promoted ads
+try {
+    $query = $db->prepare("SELECT id from ads WHERE active = 1");
+    $query->execute();
+    $allIds = $query->fetchAll(PDO::FETCH_COLUMN);
+    //Losowanie 8 id
+    $randomIds = array_rand(array_flip($allIds), 8);
+    $ids = implode(',', $randomIds);
+    //pobranie rekordow z tymi id
+    $query = $db->prepare("select * from ads where id in ($ids)");
+    $query->execute();
+    $randomAds = $query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error fetching random ads.']);
+    exit();
+}
+
+
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,6 +133,32 @@
         color: #007bff;
         /* Kolor na hover (np. niebieski) */
     }
+
+    .promoEle {
+        border: 1px solid #f8f9fa;
+        background-color: white;
+
+    }
+
+    .promoEle:hover {
+        background-color: #f8f9fa;
+        border: none;
+    }
+
+    .katEle {
+        border: 1px solid #f8f9fa;
+        background-color: white;
+        text-align: center;
+        text-decoration: none;
+        color: black;
+    }
+
+    .katEle:hover {
+        background-color: #f8f9fa;
+        border: none;
+        text-decoration: none;
+        color: black;
+    }
 </style>
 
 
@@ -141,22 +202,22 @@
             <!-- Main Content -->
             <main class="col-md-8 bg-light">
                 <!-- wyszukiwanie -->
-                <div style="padding: 30px 0;" class="col-md-12 bg-light>
-                    <form action=" #" method="post" novalidate="novalidate">
-                    <div class=" justify-content-center align-items-center">
-                        <div class="row">
-                            <div class="col-lg-8 col-md-8 col-sm-8 p-0">
-                                <input type="text" class="form-control search-slt" placeholder="Find something for you!">
+                <div style="padding: 30px 0;" class="col-md-12 bg-light">
+                    <form id="searchForm" action="./oferts.php" method="GET">
+                        <div class=" justify-content-center align-items-center">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-8 p-0">
+                                    <input type="text" class="form-control search-slt" id="searchQuery" name="search" placeholder="Find something for you!">
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 p-0">
+                                    <input type="text" class="form-control search-slt" id="locationQuery" name="location" placeholder="Location">
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 p-0">
+                                    <button type="submit" class="btn btn-light btn-search" id="searchButton">Search</button>
+                                </div>
                             </div>
-                            <div class="col-lg-2 col-md-2 col-sm-2 p-0">
-                                <input type="text" class="form-control search-slt" placeholder="Location">
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-sm-2 p-0">
-                                <button type="button" class="btn btn-light btn-search">Search</button>
-                            </div>
-                        </div>
 
-                    </div>
+                        </div>
                     </form>
                 </div>
                 <!-- kategorie -->
@@ -166,24 +227,15 @@
                     <h2 style="text-align: center;">Main categories</h2>
                     <div class="mt-5">
                         <div class="row">
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
-                            <div class="col-4 col-sm-4 col-lg-2 mb-5"><a href=""><img style="width: 70px;" src="./img/kategorie/elektronika.png" alt="">
-                                    <p>Elektronika</p>
-                                </a></div>
+                            <?php foreach ($categories as $category): ?>
+                                <a class="col-4 col-sm-4 col-lg-2 mb-3 katEle" href="category.php?id=<?= htmlspecialchars($category['id']) ?>">
+                                    <img style="width: 70px;" src="./img/kategorie/<?= strtolower($category['name']) ?>.png" alt="<?= htmlspecialchars($category['name']) ?>">
+                                    <p><?= htmlspecialchars($category['name']) ?></p>
+                                </a>
+                            <?php endforeach; ?>
+
+
+
                         </div>
                     </div>
                 </div>
@@ -195,108 +247,29 @@
                     <h2 style="margin:5% 0%;text-align: center;">Promoted Ads</h2>
                     <div class="mt-5">
                         <div class="row">
-                            <!-- pierwszy ele -->
 
-                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
+
+                            <!-- pierwszy ele -->
+                            <?php foreach ($randomAds as $ad): ?>
+                                <a class="promoEle col-6 col-sm-6 col-md-4 col-lg-3 my-1" href="adDetails.php?id=<?= htmlspecialchars($ad['id']) ?>" style="text-decoration: none; color:black;">
+                                    <div class="d-flex justify-content-center">
+                                        <img src="./uploads/<?= htmlspecialchars($ad['image_path']) ?>" style="height: 200px;width:200px;" alt="<?= htmlspecialchars($ad['title']) ?>">
+                                    </div>
                                     <div>
                                         <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
+                                            <p style="font-size:13px;height:30px; word-wrap: break-word; white-space: normal;">
+                                                <?= htmlspecialchars(strlen($ad['title']) > 50) ? substr($ad['title'], 0, 50) . '...' : $ad['title']  ?>
+                                            </p>
+                                            <br>
+                                            <p><b><?= number_format($ad['price'], 2) ?> zł</b></p>
                                         </div>
                                         <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
+                                            <small style="font-size: 10px;"><?= htmlspecialchars(ucfirst($ad['localization'])) ?></small><br>
+                                            <small style="font-size: 10px;">Odświeżono dnia <?= date('d F Y', strtotime($ad['updated_at'])) ?></small>
                                         </div>
                                     </div>
                                 </a>
-                            </div>
-                            <!-- pierwszy ele -->
-
-                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
-                                    <div>
-                                        <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
-                                        </div>
-                                        <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- pierwszy ele -->
-
-                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
-                                    <div>
-                                        <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
-                                        </div>
-                                        <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- pierwszy ele -->
-
-                            <div class="col-6 col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
-                                    <div>
-                                        <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
-                                        </div>
-                                        <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- pierwszy ele -->
-
-                            <div class="col-6  col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
-                                    <div>
-                                        <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
-                                        </div>
-                                        <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- pierwszy ele -->
-
-                            <div class="col-6 col-lg-3 mb-5">
-                                <a style="text-decoration: none;" href="">
-                                    <div class="d-flex justify-content-center"><img src="./uploads/675c492b2ea68.jpg" style="height: 200px;width:200px;" alt=""></div>
-                                    <div>
-                                        <div class="m-4">
-                                            <p style="font-size:13px">rusztowania bardzo dobre itd rusztowanie cos tam</p>
-                                            <p><b>255,15zl</b></p>
-                                        </div>
-                                        <div class="m-4">
-                                            <small style="font-size: 10px;">Grójec</small><br>
-                                            <small style="font-size: 10px;">odświeżono dnia 12 grudnia 2024</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                            <?php endforeach; ?>
 
 
                         </div>
@@ -345,7 +318,7 @@
                     <div class="mb-3" style="align-items: center;"><img style="height:100px; width:100px" src="./img/1.svg" alt=""></div>
                     <div class="m-4" style="font-size:12px;">
                         <span>
-                        Main Categories: Antiques & CollectiblesBusiness & IndustryAutomotiveReal EstateWorkHome & GardenElectronicsFashionFarmingAnimalsFor KidsSports & HobbiesMusic & EducationHealth & BeautyServicesAccommodationRentalI'll Give Away for Free                        </span>
+                            Main Categories: Antiques & CollectiblesBusiness & IndustryAutomotiveReal EstateWorkHome & GardenElectronicsFashionFarmingAnimalsFor KidsSports & HobbiesMusic & EducationHealth & BeautyServicesAccommodationRentalI'll Give Away for Free </span>
                     </div>
                 </div>
 
@@ -353,7 +326,7 @@
                 <div class="col-6">
                     <div class="mb-3" style="align-items: center;"><img style="height:100px; width:100px" src="./img/2.svg" alt=""></div>
                     <div class="m-4" style="font-size:12px;"><span>
-                    Popular searches: passenger carsrenault capturused carspassenger carskia ceedhyundai i20hyundai i30hyundai ix35bmw x1ford kugavw tiguankia sportagepeugeot 3008hyundai tucsonnissan qashqaitoyota corollatoyota aurisnissan jukeaudi q5volvo xc60                        </span>
+                            Popular searches: passenger carsrenault capturused carspassenger carskia ceedhyundai i20hyundai i30hyundai ix35bmw x1ford kugavw tiguankia sportagepeugeot 3008hyundai tucsonnissan qashqaitoyota corollatoyota aurisnissan jukeaudi q5volvo xc60 </span>
                     </div>
                 </div>
             </div>
@@ -394,6 +367,7 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
 
 </body>
 
