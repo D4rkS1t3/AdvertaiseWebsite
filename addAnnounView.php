@@ -1,210 +1,392 @@
 <?php
-session_start();
-require 'db.php';
-require 'resizeImage.php';
+    session_start();
+    require 'db.php';
 
-if (!isset($_SESSION['session_id'])) {
-    header("Location: signin.php");
-    exit();
-}
+    if (!isset($_SESSION['session_id'])) {
+        header("Location: signin.php");
+        exit();
+    }
 
-$sessionID = $_SESSION['session_id'];
+    $sessionID = $_SESSION['session_id'];
 
-try {
-    $query = $db->prepare("SELECT id, name FROM categories");
-    $query->execute();
-    $categories = $query->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
-    exit();
-}
+    try {
+        $query = $db->prepare("SELECT id, name FROM categories");
+        $query->execute();
+        $categories = $query->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
+        exit();
+    }
 
-try {
-    $select = $db->prepare("SELECT id, email, username FROM users WHERE session_id = :session_id");
-    $select->bindParam(':session_id', $sessionID);
+    try {
+        $select = $db->prepare("SELECT email, username FROM users WHERE session_id = :session_id");
+        $select->bindParam(':session_id', $sessionID);
 
-    if ($select->execute()) {
+        if ($select->execute()) {
 
-        $data = $select->fetch(PDO::FETCH_ASSOC);
+            $data = $select->fetch(PDO::FETCH_ASSOC);
 
-        if ($data) {
-            $email = $data['email'];
-            $userId = $data['id'];
-            $username = $data['username'];
+            if ($data) {
+                $email = $data['email'];
+                $username = $data['username'];
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "No user found for the given session ID!"
+                ]);
+                exit();
+            }
         } else {
             echo json_encode([
                 "success" => false,
-                "message" => "No user found for the given session ID!"
+                "message" => "Error executing the query!"
             ]);
             exit();
         }
-    } else {
+    } catch (PDOException $e) {
         echo json_encode([
             "success" => false,
-            "message" => "Error executing the query!"
+            "message" => "Error: " . $e->getMessage()
         ]);
         exit();
     }
-} catch (PDOException $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Error: " . $e->getMessage()
-    ]);
-    exit();
-}
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Your advertisement</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsywna Nawigacja</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
-
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link href="css/mojestyle.css" rel="stylesheet" />
-</head>
-<style>
-    body {
-        padding-top: 47px;
-        /* Przesuwa zawartość w dół o wysokość navbar */
-        margin: 0;
-    }
 
-    body {
-        margin-top: 20px;
-        background: #f5f5f5;
-    }
+    <style>
+        .search-sec {
+            padding: 2rem;
+        }
 
-    /**
+        .search-slt {
+            display: block;
+            width: 100%;
+            height: 22px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #55595c;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            height: calc(4rem + 3px) !important;
+            border-radius: 0;
+        }
+
+        .btn-search {
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 400;
+            text-transform: capitalize;
+            height: calc(4rem + 3px) !important;
+            border-radius: 1%;
+            background-color: var(--bs-body-color);
+            color: white !important;
+        }
+
+        .btn-search:hover {
+
+            background-color: rgb(21 106 191) !important;
+            color: white !important;
+        }
+
+        @media (min-width: 992px) {
+            .search-sec {
+                position: relative;
+                top: -114px;
+                background: rgba(26, 70, 104, 0.51);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .search-sec {
+                background: #1A4668;
+            }
+        }
+
+        .social-icons {
+            margin: 20px 0;
+        }
+
+        .social-icons h4 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 24px;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: #007bff;
+            /* Kolor na hover (np. niebieski) */
+        }
+
+        .promoEle {
+            border: 1px solid #f8f9fa;
+            background-color: white;
+
+        }
+
+        .promoEle:hover {
+            background-color: #f8f9fa;
+            border: none;
+        }
+
+        .katEle {
+            border: 1px solid #f8f9fa;
+            background-color: white;
+            text-align: center;
+            text-decoration: none;
+            color: black;
+        }
+
+        .katEle:hover {
+            background-color: #f8f9fa;
+            border: none;
+            text-decoration: none;
+            color: black;
+        }
+
+
+
+        .container-custom {
+            padding-left: 260px;
+            padding-right: 260px;
+        }
+
+        .navbar-brand {
+            margin-right: auto;
+        }
+
+        .btn-add-ad {
+            margin-left: 10px;
+        }
+
+        .container-custom {
+            padding-left: 320px;
+            padding-right: 320px;
+        }
+
+        @media (max-width: 1900px) {
+            .container-custom {
+                padding-left: 300px;
+                padding-right: 300px;
+            }
+        }
+
+        @media (max-width: 1600px) {
+            .container-custom {
+                padding-left: 255px;
+                padding-right: 255px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .container-custom {
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-custom {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            /* Wymuszenie odpowiedniego układu */
+            .navbar-collapse {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Linki w poziomie */
+            .navbar-nav {
+                flex-direction: row !important;
+            }
+
+            .dropdown-menu {
+                position: absolute !important;
+                /* Menu nie rozciąga nawigacji */
+                top: 100%;
+                left: 0;
+                z-index: 1000;
+            }
+
+            .nav-item {
+                margin-bottom: 0 !important;
+            }
+
+            /* Przycisk obok menu */
+
+            .navbar {
+                flex-wrap: nowrap !important;
+            }
+        }
+
+        /* Globalne poprawki */
+        .navbar-collapse {
+            flex-grow: 0;
+        }
+
+        .btn-add-ad {
+            flex-grow: 0;
+        }
+
+        .navbar-brand,
+        #navbarDropdown,
+        .btn-add-ad {
+            font-size: 18px !important;
+
+            font-weight: 400 !important;
+            color: white !important;
+        }
+
+        .btn-add-ad {
+                margin-left: 10px;
+                background-color: #0b5ed7!important;
+            }
+
+        /**
  * Panels
  */
-    /*** General styles ***/
-    .panel {
-        box-shadow: none;
-    }
-
-    .panel-heading {
-        border-bottom: 0;
-    }
-
-    .panel-title {
-        font-size: 17px;
-    }
-
-    .panel-title>small {
-        font-size: .75em;
-        color: #999999;
-    }
-
-    .panel-body *:first-child {
-        margin-top: 0;
-    }
-
-    .panel-footer {
-        border-top: 0;
-    }
-
-    .panel-default>.panel-heading {
-        color: #333333;
-        background-color: transparent;
-        border-color: rgba(0, 0, 0, 0.07);
-    }
-
-    form label {
-        color: #999999;
-        font-weight: 400;
-    }
-
-    .form-horizontal .form-group {
-        margin-left: -15px;
-        margin-right: -15px;
-    }
-
-    @media (min-width: 768px) {
-        .form-horizontal .control-label {
-            text-align: right;
-            margin-bottom: 0;
-            padding-top: 7px;
+        /*** General styles ***/
+        .panel {
+            box-shadow: none;
         }
-    }
 
-    .profile__contact-info-icon {
-        float: left;
-        font-size: 18px;
-        color: #999999;
-    }
-
-    .profile__contact-info-body {
-        overflow: hidden;
-        padding-left: 20px;
-        color: #999999;
-    }
-
-    .profile-avatar {
-        width: 200px;
-        position: relative;
-        margin: 0px auto;
-        margin-top: 196px;
-        border: 4px solid #f3f3f3;
-    }
-
-    @media (min-width: 768px) {
-        .col-sm-9 {
-            width: 69% !important;
+        .panel-heading {
+            border-bottom: 0;
         }
-    }
-</style>
 
+        .panel-title {
+            font-size: 17px;
+        }
 
-<body class="sb-nav-fixed">
-    <!-- Nav -->
+        .panel-title>small {
+            font-size: .75em;
+            color: #999999;
+        }
 
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" id="navFirst" href="index.html">Advertise Website</a>
-        <!-- Sidebar Toggle-->
+        .panel-body *:first-child {
+            margin-top: 0;
+        }
 
+        .panel-footer {
+            border-top: 0;
+        }
 
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        .panel-default>.panel-heading {
+            color: #333333;
+            background-color: transparent;
+            border-color: rgba(0, 0, 0, 0.07);
+        }
 
-            <li class="nav-item dropdown">
-                <a style="text-decoration: none;" class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="ms-2">Your account</span><i class="fas fa-user fa-fw"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="./accountSett.php">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
+        form label {
+            color: #999999;
+            font-weight: 400;
+        }
+
+        .form-horizontal .form-group {
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+
+        @media (min-width: 768px) {
+            .form-horizontal .control-label {
+                text-align: right;
+                margin-bottom: 0;
+                padding-top: 7px;
+            }
+        }
+
+        .profile__contact-info-icon {
+            float: left;
+            font-size: 18px;
+            color: #999999;
+        }
+
+        .profile__contact-info-body {
+            overflow: hidden;
+            padding-left: 20px;
+            color: #999999;
+        }
+
+        .profile-avatar {
+            width: 200px;
+            position: relative;
+            margin: 0px auto;
+            margin-top: 196px;
+            border: 4px solid #f3f3f3;
+        }
+    </style>
+</head>
+
+<body>
+    <nav style="margin-bottom: 0;" class="navbar navbar-expand-sm bg-dark">
+        <div class="container-fluid container-custom">
+            <!-- Logo -->
+            <a class="navbar-brand" href="./index.php">Advertise Website</a>
+
+            <!-- Menu -->
+            <div class="" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a style="text-decoration: none;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Your Account
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./accountSett.php">Settings</a></li>
+                            <li><a class="dropdown-item" href="./dashboard.php">My advertise</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="./logout.php">Logout</a></li>
+                        </ul>
                     </li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
                 </ul>
-            </li>
-        </ul>
-        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = '404.html';">
-            <span class="ms-2">Add an advertisement</span></button>
+            </div>
+
+            <!-- Przycisk -->
+            <a class="btn btn-primary btn-add-ad" href="./addAnnounView.php">Add Advertisement</a>
+        </div>
     </nav>
-
-
-
     <!-- Main Layout -->
-    <div style="min-height: 630px;" id="kontener" class="container-fluid bg-light mt-3">
+    <div style="min-height: 630px;" id="kontener" class="container-fluid bg-light">
         <div class="row">
             <!-- Left Sidebar (Empty) -->
             <div class="col-md-2 bg-light" id="sideBar1"></div>
-
             <!-- Main Content -->
-            <main class="col-md-8 bg-light">
+            <main class="col-md-8 bg-light mt-2">
                 <div class="container bootstrap snippets bootdeys">
                     <div class="row">
                         <div class="col-xs-12 col-sm-9">
@@ -225,6 +407,7 @@ try {
                                             <label class="col-sm-2 control-label">Title of the ad:*</label>
                                             <div class="col-sm-10">
                                                 <input type="text" id="title" name="title" class="form-control" placeholder="Iphone 11" required>
+                                                <div id="titleError" class="text-danger" style="display: none; margin-top: 5px;"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -301,6 +484,7 @@ try {
                                             <label class="col-sm-2 control-label">location:*</label>
                                             <div class="col-sm-10">
                                                 <input type="text" id="location" name="location" class="form-control" placeholder="Warsaw" required>
+                                                <div id="locationError" class="text-danger" style="display: none; margin-top: 5px;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -357,10 +541,14 @@ try {
                 </div>
             </main>
 
-            <!-- Right Sidebar (Empty) -->
+
+
             <div class="col-md-2 bg-light" id="sideBar2"></div>
         </div>
+
     </div>
+
+
 
 
     <!-- Footer -->
@@ -368,13 +556,15 @@ try {
         &copy; 2024 Advertise Website
     </footer>
 
+<script>
+    
+</script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-    <script src="js/datatables-simple-demo.js"></script>
-    <script>
+    <!-- Poprawiony skrypt Bootstrap 5 (bez jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script>
         $(document).ready(function() {
 
             //obsluga licznika opisu i bledu gdy jest nie poprawnej dlugosci
@@ -405,72 +595,6 @@ try {
             });
 
 
-            // Obsługa przesyłania formularza
-            $("#submit").click(function(e) {
-                e.preventDefault(); // Zapobiega domyślnej akcji formularza
-
-                // Przewiń stronę na samą górę
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                // Pobierz dane z formularza
-                const formData = new FormData($('#adForm')[0]);
-                const descriptionLength = $('#description').val().length;
-
-
-                if (descriptionLength < 40 || descriptionLength > 9000) {
-                    $('#descriptionError')
-                        .text(descriptionLength < 40 ?
-                            "Description is too short. Add at least 40 characters." :
-                            "Description exceeds the maximum allowed length of 9000 characters.")
-                        .removeClass("text-success")
-                        .addClass("text-danger")
-                        .show();
-                    return;
-                }
-
-                //wysylanie danych do serwera
-
-                $.ajax({
-                    url: 'addAnnoun.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false, //wysylamy plik wiec wylaczamy przetwarzania do url zapytania
-                    contentType: false, //form data uswai sam odpowiedni naglowek w http
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            $("#message")
-                                .text(response.message)
-                                .removeClass("alert-danger")
-                                .addClass("alert-success")
-                                .show();
-                            setTimeout(function() {
-                                window.location.href = response.redirect;
-                            }, 3000);
-                        } else {
-                            $("#message")
-                                .text(response.message)
-                                .removeClass("alert-success")
-                                .addClass("alert-danger")
-                                .show();
-                        }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        // Logowanie szczegółów błędu do konsoli
-                        console.error('AJAX Error:', textStatus, errorThrown);
-                        console.error('Response Text:', jqXHR.responseText);
-
-                        // Wyświetlenie błędu w interfejsie użytkownika
-                        $("#message")
-                            .text("An error occurred while submitting the data. Check the console for more details.")
-                            .removeClass("alert-success")
-                            .addClass("alert-danger")
-                            .show();
-                    }
-                });
-            });
-
-
             $('#phoneNumber').on('input', function() {
                 const phone = $(this).val();
                 const isValid = /^\+?[0-9]{9,15}$/.test(phone);
@@ -486,6 +610,42 @@ try {
                     $('#phoneError').hide();
                 }
             });
+
+
+
+            $('#title').on('input', function() {
+                const title = $(this).val().trim();
+
+                if (!title || title.length < 5) {
+                    $('#titleError')
+                        .text('Title must be at least 5 characters long')
+                        .removeClass("text-success")
+                        .addClass("text-danger")
+                        .show();
+
+                } else {
+                    $('#titleError').hide();
+                }
+            });
+
+
+
+            $('#location').on('input', function() {
+                const location = $(this).val().trim();
+
+                if (!location || location.length < 3) {
+                    $('#locationError')
+                        .text('Title must be at least 3 characters long')
+                        .removeClass("text-success")
+                        .addClass("text-danger")
+                        .show();
+
+                } else {
+                    $('#locationError').hide();
+                }
+            });
+
+
 
 
 
@@ -549,22 +709,131 @@ try {
                 }
             });
 
+            // Funkcja walidacji
+            function validateForm() {
+                let isValid = true;
+
+                // Lista wymaganych pól z komunikatami błędów
+                const requiredFields = [{
+                        id: '#title',
+                        errorId: '#titleError',
+                        errorMessage: 'Title is required and must be at least 5 characters long.',
+                        minLength: 5
+                    },
+                    {
+                        id: '#category',
+                        errorId: '#categoryError',
+                        errorMessage: 'Please select a category.',
+                        minLength: 1
+                    },
+                    {
+                        id: '#price',
+                        errorId: '#priceError',
+                        errorMessage: 'Price is required and must be a positive number.',
+                        minLength: 1
+                    },
+                    {
+                        id: '#description',
+                        errorId: '#descriptionError',
+                        errorMessage: 'Description is too short. Add at least 40 characters.',
+                        minLength: 40
+                    },
+                    {
+                        id: '#location',
+                        errorId: '#locationError',
+                        errorMessage: 'Location is required and must be at least 3 characters long.',
+                        minLength: 3
+                    },
+                ];
+
+                // Przechodzimy przez każde pole i sprawdzamy walidację
+                requiredFields.forEach(function(field) {
+                    const value = $(field.id).val().trim();
+                    const isNumberField = $(field.id).attr('type') === 'number';
+
+                    if (!value || value.length < field.minLength || (isNumberField && parseFloat(value) <= 0)) {
+                        isValid = false;
+                        $(field.errorId).text(field.errorMessage).show();
+                        $(field.id).addClass('is-invalid'); // Opcjonalnie dodaj klasę CSS dla błędów
+                    } else {
+                        $(field.errorId).hide();
+                        $(field.id).removeClass('is-invalid'); // Usuń klasę CSS, jeśli pole jest poprawne
+                    }
+                });
+
+                return isValid;
+            }
+            // Obsługa przesyłania formularza
+            $("#submit").click(function(e) {
+                e.preventDefault(); // Zapobiega domyślnej akcji formularza
+
+                // Przewiń stronę na górę (opcjonalne)
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+                // Wywołaj walidację formularza
+                if (!validateForm()) {
+                    $("#message")
+                        .text("Please fill in all required fields correctly.")
+                        .removeClass("alert-success")
+                        .addClass("alert-danger")
+                        .show();
+                    return;
+                }
+
+                // Jeśli walidacja przejdzie, wysyłamy dane do serwera
+                const formData = new FormData($('#adForm')[0]);
+
+                $.ajax({
+                    url: 'addAnnoun.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Wyłączamy przetwarzanie danych w URL
+                    contentType: false, // FormData samodzielnie ustawia odpowiedni nagłówek
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $("#message")
+                                .text(response.message)
+                                .removeClass("alert-danger")
+                                .addClass("alert-success")
+                                .show();
+                            setTimeout(function() {
+                                window.location.href = response.redirect;
+                            }, 3000);
+                        } else {
+                            $("#message")
+                                .text(response.message)
+                                .removeClass("alert-success")
+                                .addClass("alert-danger")
+                                .show();
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX Error:', textStatus, errorThrown);
+                        console.error('Response Text:', jqXHR.responseText);
+
+                        $("#message")
+                            .text("An error occurred while submitting the data. Check the console for more details.")
+                            .removeClass("alert-success")
+                            .addClass("alert-danger")
+                            .show();
+                    }
+                });
+            });
+
+
+
+
+
 
 
 
 
         });
     </script>
-
-    <!-- Bootstrap core JavaScript-->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap (jeśli potrzebne interaktywne komponenty) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-
-
 </body>
 
 </html>

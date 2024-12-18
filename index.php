@@ -34,33 +34,18 @@ try {
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Your advertisement</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsywna Nawigacja</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="css/mojestyle.css" rel="stylesheet" />
-</head>
+
 <style>
-    body {
-        padding-top: 47px;
-        /* Przesuwa zawartość w dół o wysokość navbar */
-        margin: 0;
-    }
 
-    /*search box css start here*/
     .search-sec {
         padding: 2rem;
     }
@@ -68,24 +53,24 @@ try {
     .search-slt {
         display: block;
         width: 100%;
-        height: 72px;
-        font-size: 1.25rem;
+        height: 22px;
+        font-size: 1rem;
         line-height: 1.5;
         color: #55595c;
         background-color: #fff;
         background-image: none;
         border: 1px solid #ccc;
-        height: calc(5rem + 5px) !important;
+        height: calc(4rem + 3px) !important;
         border-radius: 0;
     }
 
     .btn-search {
         width: 100%;
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 400;
         text-transform: capitalize;
-        height: calc(5rem + 5px) !important;
-        border-radius: 2%;
+        height: calc(4rem + 3px) !important;
+        border-radius: 1%;
         background-color: var(--bs-body-color);
         color: white !important;
     }
@@ -159,47 +144,152 @@ try {
         text-decoration: none;
         color: black;
     }
-</style>
 
 
-<body class="sb-nav-fixed">
-    <!-- Nav -->
 
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" id="navFirst" href="index.php">Advertise Website</a>
-        <!-- Sidebar Toggle-->
+        .container-custom {
+            padding-left: 260px;
+            padding-right: 260px;
+        }
 
+        .navbar-brand {
+            margin-right: auto;
+        }
 
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        .btn-add-ad {
+            margin-left: 10px;
+        }
 
-            <li class="nav-item dropdown">
-                <a style="text-decoration: none;" class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="ms-2">Your account</span><i class="fas fa-user fa-fw"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="./accountSett.php">Settings</a></li>
-                    <li><a class="dropdown-item" href="./dashboard.php">My advertise</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
+        .container-custom {
+                padding-left: 320px;
+                padding-right: 320px;
+            }
+        @media (max-width: 1900px) {
+            .container-custom {
+                padding-left: 300px;
+                padding-right: 300px;
+            }
+        }
+
+        @media (max-width: 1600px) {
+            .container-custom {
+                padding-left: 255px;
+                padding-right: 255px;
+            }
+        }
+        /* @media (max-width: 1300px) {
+            .container-custom {
+                padding-left: 180px;
+                padding-right: 180px;
+            }
+        } */
+
+        @media (max-width: 1200px) {
+            .container-custom {
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-custom {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            /* Wymuszenie odpowiedniego układu */
+            .navbar-collapse {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Linki w poziomie */
+            .navbar-nav {
+                flex-direction: row !important;
+                margin-bottom: 0;
+            }
+
+            .dropdown-menu {
+                position: absolute !important;
+                /* Menu nie rozciąga nawigacji */
+                top: 100%;
+                left: 0;
+                z-index: 1000;
+            }
+
+            .nav-item {
+                margin-bottom: 0 !important;
+            }
+
+            /* Przycisk obok menu */
+            .btn-add-ad {
+                margin-left: 10px;
+            }
+
+            .navbar {
+                flex-wrap: nowrap !important;
+            }
+        }
+
+        /* Globalne poprawki */
+        .navbar-collapse {
+            flex-grow: 0;
+        }
+
+        .btn-add-ad {
+            flex-grow: 0;
+        }
+
+        .navbar-brand,
+        #navbarDropdown,
+        .btn-add-ad {
+            font-size: 18px !important;
+            ;
+            font-weight: 400 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark">
+        <div class="container-fluid container-custom">
+            <!-- Logo -->
+            <a class="navbar-brand" href="./index.php">Advertise Website</a>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Your Account
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./accountSett.php">Settings</a></li>
+                            <li><a class="dropdown-item" href="./dashboard.php">My advertise</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="./logout.php">Logout</a></li>
+                        </ul>
                     </li>
-                    <li><a class="dropdown-item" href="./logout.php">Logout</a></li>
                 </ul>
-            </li>
-        </ul>
-        <button type="button" class="btn btn-light" id="btn-add" onclick="window.location.href = 'addAnnounView.php';">
-            <span class="ms-2">Add an advertisement</span></button>
+            </div>
+
+            <!-- Przycisk -->
+            <a class="btn btn-primary btn-add-ad" href="./addAnnounView.php">Add Advertisement</a>
+        </div>
     </nav>
-
-
-
     <!-- Main Layout -->
-    <div style="min-height: 630px;" id="kontener" class="container-fluid bg-light mt-3">
+    <div style="min-height: 630px;" id="kontener" class="container-fluid bg-light">
         <div class="row">
             <!-- Left Sidebar (Empty) -->
             <div class="col-md-2 bg-light" id="sideBar1"></div>
-
-            <!-- Main Content -->
             <main class="col-md-8 bg-light">
                 <!-- wyszukiwanie -->
                 <div style="padding: 30px 0;" class="col-md-12 bg-light">
@@ -253,7 +343,27 @@ try {
                             <?php foreach ($randomAds as $ad): ?>
                                 <a class="promoEle col-6 col-sm-6 col-md-4 col-lg-3 my-1" href="adDetails.php?id=<?= htmlspecialchars($ad['id']) ?>" style="text-decoration: none; color:black;">
                                     <div class="d-flex justify-content-center">
-                                        <img src="./uploads/<?= htmlspecialchars($ad['image_path']) ?>" style="height: 200px;width:200px;" alt="<?= htmlspecialchars($ad['title']) ?>">
+                                        <?php
+                                        if (!empty($ad['image_path'])) {
+                                            $imagePaths = explode(',', $ad['image_path']);
+                                            $firstImage = $imagePaths[0];
+                                            // Przyjmijmy, że mamy różne rozmiary obrazów
+                                            $baseImagePath = './uploads/';
+                                        } else {
+                                            $baseImagePath = './uploads/';
+                                            $firstImage = 'noImage.jpg';
+                                        }
+                                        ?>
+                                        <img
+                                            src="<?= $baseImagePath ?>thumb_300x200/<?= htmlspecialchars($firstImage) ?>"
+                                            srcset="
+                <?= $baseImagePath ?>thumb_150x113/<?= htmlspecialchars($firstImage) ?> 150w, 
+                <?= $baseImagePath ?>thumb_300x200/<?= htmlspecialchars($firstImage) ?> 300w, 
+                <?= $baseImagePath ?>thumb_600x400/<?= htmlspecialchars($firstImage) ?> 600w, 
+            "
+                                            sizes="(max-width: 768px) 150px, (max-width: 1024px) 300px, 600px"
+                                            alt="<?= htmlspecialchars($ad['title']) ?>"
+                                            class="img-fluid">
                                     </div>
                                     <div>
                                         <div class="m-4">
@@ -269,6 +379,7 @@ try {
                                         </div>
                                     </div>
                                 </a>
+
                             <?php endforeach; ?>
 
 
@@ -277,15 +388,13 @@ try {
                 </div>
 
             </main>
-
-            <!-- Right Sidebar (Empty) -->
             <div class="col-md-2 bg-light" id="sideBar2"></div>
         </div>
+
     </div>
+ <!-- promocja -->
 
-    <!-- promocja -->
-
-    <div style="background-color: #cbf7ee; min-height: 200px;" class="promo">
+ <div style="background-color: #cbf7ee; min-height: 200px;" class="promo">
         <div class="container">
             <div class="row">
                 <div class="col-12 mt-5" style="text-align: center; align-items: center;font-size:12px;">
@@ -310,9 +419,9 @@ try {
     </div>
 
     <!-- Kategorie i popularne wyszukiwania -->
-    <div class="bg-light" style="min-height: 200px;" class="popular">
-        <div class="container">
-            <div class="row my-5 text-center">
+    <div class="bg-light py-5" style="min-height: 200px;" class="popular">
+        <div class="container ">
+            <div class="row text-center">
                 <!-- Pierwsza kolumna -->
                 <div class="col-6">
                     <div class="mb-3" style="align-items: center;"><img style="height:100px; width:100px" src="./img/1.svg" alt=""></div>
@@ -338,37 +447,14 @@ try {
 
 
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-5 mt-auto">
+    <footer class="bg-dark text-white text-center py-4 mt-auto">
         &copy; 2024 Advertise Website
     </footer>
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="assets/demo/chart-area-demo.js"></script>
-    <script src="assets/demo/chart-bar-demo.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-    <script src="js/datatables-simple-demo.js"></script>
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
-
+    <!-- Poprawiony skrypt Bootstrap 5 (bez jQuery) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
