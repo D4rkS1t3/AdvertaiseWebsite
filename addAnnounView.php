@@ -552,7 +552,7 @@
 
 
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-5 mt-auto">
+    <footer class="bg-dark text-white text-center py-4 mt-auto">
         &copy; 2024 Advertise Website
     </footer>
 
