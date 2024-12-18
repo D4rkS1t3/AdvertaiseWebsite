@@ -9,7 +9,7 @@ if (!isset($_SESSION['session_id'])) {
 
 $sessionID = $_SESSION['session_id'];
 
-$query = $db->prepare("SELECT * FROM users WHERE session_id = :session_id");
+$query = $db->prepare("SELECT username, email FROM users WHERE session_id = :session_id");
 $query->bindParam(':session_id', $sessionID);
 $query->execute();
 $row = $query->fetch(PDO::FETCH_ASSOC);

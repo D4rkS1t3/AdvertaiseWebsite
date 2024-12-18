@@ -2,34 +2,41 @@
 session_start();
 require 'db.php';
 
-//pobranie kategorii
-try {
-	$query = $db->prepare("SELECT id, name FROM categories");
-	$query->execute();
-	$categories = $query->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-	echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
-	exit();
-}
-//losowe ogloszenia do promoted ads
-try {
-	$query = $db->prepare("SELECT id from ads WHERE active = 1");
-	$query->execute();
-	$allIds = $query->fetchAll(PDO::FETCH_COLUMN);
-	//Losowanie 8 id
-	$randomIds = array_rand(array_flip($allIds), 8);
-	$ids = implode(',', $randomIds);
-	//pobranie rekordow z tymi id
-	$query = $db->prepare("select * from ads where id in ($ids)");
-	$query->execute();
-	$randomAds = $query->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-	echo json_encode(['success' => false, 'message' => 'Error fetching random ads.']);
+if (!isset($_SESSION['session_id'])) {
+	header("Location: signin.php");
 	exit();
 }
 
+$sessionID = $_SESSION['session_id'];
+try {
+	//pobranie id uzytkownika zeby wybrac odpowiednie ogloszenia
 
+	$query = $db->prepare("SELECT id FROM users WHERE session_id = :session_id");
+	$query->bindParam(':session_id', $sessionID);
+	$query->execute();
+	$data = $query->fetch(PDO::FETCH_ASSOC);
+	$userId = $data['id'];
 
+	//pobranie z bazy ogloszen uzytkownika aktywnych ogloszen
+	$queryActiveAds = $db->prepare("SELECT * FROM ads WHERE user_id = :user_id && active = 1");
+	$queryActiveAds->bindParam(':user_id', $userId);
+	$queryActiveAds->execute();
+	$activeAds = $queryActiveAds->fetchAll(PDO::FETCH_ASSOC);
+
+	//pobranie z bazy ogloszen uzytkownika nieaktywnych ogloszen
+	$queryUnActiveAds = $db->prepare("SELECT * FROM ads WHERE user_id = :user_id && active = 0");
+	$queryUnActiveAds->bindParam(':user_id', $userId);
+	$queryUnActiveAds->execute();
+	$unActiveAds = $queryUnActiveAds->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+	echo json_encode(['success' => false, 'message' => 'Error fetching your data!']);
+	exit();
+}
+// //losowe ogloszenia do promoted ads
+
+$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'active';
+
+$adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 
 
 ?>
@@ -253,6 +260,12 @@ try {
 			font-weight: 400 !important;
 			color: white !important;
 		}
+
+		.btn.active {
+			background-color: #007bff;
+			color: white;
+			border-color: #0056b3;
+		}
 	</style>
 </head>
 
@@ -293,15 +306,15 @@ try {
 			<div class="col-md-2 bg-light" id="sideBar1"></div>
 			<main class="col-md-8 bg-light">
 				<br>
-				<h3 class="mt-4">Your Advertisement</h3>
+				<h3 class="my-1">Your Advertisement</h3>
 				<br>
-				<div style="background-color: rgb(206, 221, 255);font-size:10px" class="panel panel-default">
-					<strong style="padding: 10px;">Attention</strong>
-					<div class="panel-body">The process of buying and selling through Shipments Advertisement takes place in your Advertisment account. Ignore links sent outside the portal, e.g. via Whatsapp. Read more on our Blog.</div>
+				<div class="alert alert-primary" role="alert">
+				<strong>Attention</strong>
+				<div class="panel-body">The process of buying and selling through Shipments Advertisement takes place in your Advertisment account. Ignore links sent outside the portal, e.g. via Whatsapp. Read more on our Blog.</div>
 				</div>
-				<div class="btn-group btn-group-justified">
-					<a href="#" class="btn btn-light">Active</a>
-					<a href="#" class="btn btn-light">Unactive</a>
+				<div class="btn-group d-flex w-100 my-3">
+					<a href="?tab=active" class="btn btn-light flex-fill <?php echo $activeTab === 'active' ? 'active' : ''; ?>">Active</a>
+					<a href="?tab=unactive" class="btn btn-light flex-fill <?php echo $activeTab === 'unactive' ? 'active' : ''; ?>">Unactive</a>
 				</div>
 
 				<!-- Content Cards -->
@@ -310,72 +323,64 @@ try {
 				<div style="width: 100%;" class="container my-4">
 					<div class="row">
 
-
-						<!-- Card 1 -->
-						<div class="mb-3">
-							<div class="card featured p-3">
-								<div class="row">
-									<div class="col-md-2 text-center">
-										<img src="https://via.placeholder.com/100x100" alt="Image" class="img-fluid rounded">
-									</div>
-									<div class="col-md-8">
-										<h5 class="card-title">Tribute to Dirty Dancing 2x Bilety Częstochowa</h5>
-										<p style="margin-top: 7%; font-size:9px" class="text-muted">Dąbrowa Górnicza - 05 grudnia 2024</p>
-									</div>
-									<div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
-										<span class="price">60 zł</span>
-										<div style="margin-top:10px;" class="actions">
-											<button class="btn btn-sm btn-primary" (click)="onEdit(task)">
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-													<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-													<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-												</svg>
-											</button>
-											<button class="btn btn-sm btn-danger" (click)="onDelete(task)">
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-													<path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-												</svg>
-											</button>
+						<?php if (!empty($adsToDisplay)) : ?>
+							<?php foreach ($adsToDisplay as $ad): ?>
+								<!-- Card 1 -->
+								<div class="mb-3">
+									<div class="card featured p-3">
+										<div class="row">
+											<div class="col-md-2 text-center">
+												<?php
+												if (!empty($ad['image_path'])) {
+													$imagePaths = explode(',', $ad['image_path']);
+													$firstImage = $imagePaths[0];
+													// Przyjmijmy, że mamy różne rozmiary obrazów
+													$baseImagePath = './uploads/';
+												} else {
+													$baseImagePath = './uploads/';
+													$firstImage = 'noImage.jpg';
+												}
+												?>
+												<img src="/uploads/thumb_150x113/<?= $firstImage ?>" alt="Image" class="img-fluid rounded">
+											</div>
+											<div class="col-md-8">
+												<h5 class="card-title"><?= $ad['title'] ?></h5>
+												<p style="margin-top: 7%; font-size:9px" class="text-muted"><?= $ad['localization'] ?> - <?= date('d F Y', strtotime($ad['updated_at']))  ?></p>
+											</div>
+											<div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
+												<span class="price"><?= $ad['price'] ?> zł</span>
+												<div style="margin-top:10px;" class="actions">
+													<button class="btn btn-sm btn-primary" (click)="onEdit(task)">
+														<i class="fa-solid fa-pen-to-square"></i>
+													</button>
+													<button class="btn btn-sm btn-danger" (click)="onDelete(task)">
+														<i class="fa-solid fa-arrow-right"></i>
+													</button>
+												</div>
+												<i class="bi bi-heart heart-icon"></i>
+											</div>
 										</div>
-										<i class="bi bi-heart heart-icon"></i>
 									</div>
 								</div>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<?php if ($activeTab === 'active'): ?>
+							<!-- Div z informacją o braku ogłoszeń dla aktywnych -->
+							<div class="alert alert-primary text-center" role="alert">
+								<h4 class="alert-heading">No ads!</h4>
+								<p>You don't have any ads in this section. Try adding a new ad!</p>
+								<a href="./addAnnounView.php" class="btn btn-primary mt-2">Add ads!</a>
 							</div>
-						</div>
-
-
-						<!-- Card 1 -->
-						<div class="mb-3">
-							<div class="card featured p-3">
-								<div class="row">
-									<div class="col-md-2 text-center">
-										<img src="https://via.placeholder.com/100x100" alt="Image" class="img-fluid rounded">
-									</div>
-									<div class="col-md-8">
-										<h5 class="card-title">Tribute to Dirty Dancing 2x Bilety Częstochowa</h5>
-										<p style="margin-top: 7%; font-size:9px" class="text-muted">Dąbrowa Górnicza - 05 grudnia 2024</p>
-									</div>
-									<div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
-										<span class="price">60 zł</span>
-										<div style="margin-top:10px;" class="actions">
-											<button class="btn btn-sm btn-primary" (click)="onEdit(task)">
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-													<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-													<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-												</svg>
-											</button>
-											<button class="btn btn-sm btn-danger" (click)="onDelete(task)">
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-													<path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-												</svg>
-											</button>
-										</div>
-										<i class="bi bi-heart heart-icon"></i>
-									</div>
+							<?php else: ?>
+								<!-- Div z informacją o braku ogłoszeń dla nieaktywnych -->
+								<div class="alert alert-primary text-center" role="alert">
+									<h4 class="alert-heading">No ads!</h4>
+									<p>You don't have any ads in this section. When the active ad ends it will be here.</p>
+									<a href="?tab=active" class="btn btn-primary mt-2">Active ads</a>
 								</div>
-							</div>
-						</div>
+							<?php endif; ?>
 
+						<?php endif; ?>
 
 
 						<!-- Add more cards as needed -->
