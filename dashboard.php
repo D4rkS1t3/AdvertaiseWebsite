@@ -341,22 +341,25 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 													$firstImage = 'noImage.jpg';
 												}
 												?>
-												<img src="/uploads/thumb_150x113/<?= $firstImage ?>" alt="Image" class="img-fluid rounded">
+												<img src="./uploads/thumb_150x113/<?= $firstImage ?>" alt="Image" class="img-fluid rounded">
 											</div>
-											<div class="col-md-8">
+											<div class="col-md-8 ">
 												<h5 class="card-title"><?= $ad['title'] ?></h5>
-												<p style="margin-top: 7%; font-size:9px" class="text-muted"><?= $ad['localization'] ?> - <?= date('d F Y', strtotime($ad['updated_at']))  ?></p>
+												<p style="margin-top: 7%; font-size:11px" class="text-muted"><?= $ad['localization'] ?> - <?= date('d F Y', strtotime($ad['updated_at']))  ?></p>
 											</div>
 											<div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
 												<span class="price"><?= $ad['price'] ?> zł</span>
+												<?php if ($activeTab === 'active'): ?>
 												<div style="margin-top:10px;" class="actions">
-													<button class="btn btn-sm btn-primary" (click)="onEdit(task)">
+													<button class="btn btn-sm btn-primary btn-edit-ads" data-id = "<?= $ad['id'] ?>">
 														<i class="fa-solid fa-pen-to-square"></i>
 													</button>
-													<button class="btn btn-sm btn-danger" (click)="onDelete(task)">
+													<button class="btn btn-sm btn-danger btn-move-to-inactive" data-id="<?= $ad['id'] ?>">
 														<i class="fa-solid fa-arrow-right"></i>
 													</button>
 												</div>
+												<?php endif; ?>
+
 												<i class="bi bi-heart heart-icon"></i>
 											</div>
 										</div>
@@ -403,6 +406,60 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 
 	<!-- Poprawiony skrypt Bootstrap 5 (bez jQuery) -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			//pobieramy przyciski wszystkie czerwone
+			const buttons = document.querySelectorAll('.btn-move-to-inactive');
+
+			buttons.forEach(button => {
+				button.addEventListener('click', function() {
+					//pobranie id ogloszenia z atrybuttu w przycisku
+					const adId = this.getAttribute('data-id');
+					
+					//wyswietlenie okna dialogowego\
+					if (confirm("Are you sure you want to move the ad to inactive?")) {
+						//wysylamy zadanie ajax
+						fetch('./moveToInactive.php', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							}, 
+							body: JSON.stringify({id:adId})
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.success) {
+								alert("The ad has been moved to inactive.")
+								location.reload();
+							} else {
+								alert("Error occured: "+data.message)
+							}
+						})
+						.catch(error => {
+							console.error("Error:", error);
+							alert("An error occurred while transferring the ad.");
+						});
+					}
+				});
+			});
+			//obsluga przyciskow edytujacy analogicznie
+			const editButtons = document.querySelectorAll('.btn-edit-ads');
+
+			editButtons.forEach(button => {
+				button.addEventListener('click', function() {
+					const adId = this.getAttribute('data-id');
+					if (adId) {
+						//przekierowanie do edycji ogloszenia
+						window.location.href = `editAnnounView.php?id=${adId}`;
+					} else {
+						alert("Ogloszenie nie ma przypisanego ID.");
+					}
+				})
+			})
+			
+		});
+	</script>
 </body>
 
 </html>
