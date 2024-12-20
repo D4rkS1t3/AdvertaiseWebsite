@@ -1,55 +1,55 @@
 <?php
-    session_start();
-    require 'db.php';
+session_start();
+require 'db.php';
 
-    if (!isset($_SESSION['session_id'])) {
-        header("Location: signin.php");
-        exit();
-    }
+if (!isset($_SESSION['session_id'])) {
+    header("Location: signin.php");
+    exit();
+}
 
-    $sessionID = $_SESSION['session_id'];
+$sessionID = $_SESSION['session_id'];
 
-    try {
-        $query = $db->prepare("SELECT id, name FROM categories");
-        $query->execute();
-        $categories = $query->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
-        exit();
-    }
+try {
+    $query = $db->prepare("SELECT id, name FROM categories");
+    $query->execute();
+    $categories = $query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error fetching categories.']);
+    exit();
+}
 
-    try {
-        $select = $db->prepare("SELECT email, username FROM users WHERE session_id = :session_id");
-        $select->bindParam(':session_id', $sessionID);
+try {
+    $select = $db->prepare("SELECT email, username FROM users WHERE session_id = :session_id");
+    $select->bindParam(':session_id', $sessionID);
 
-        if ($select->execute()) {
+    if ($select->execute()) {
 
-            $data = $select->fetch(PDO::FETCH_ASSOC);
+        $data = $select->fetch(PDO::FETCH_ASSOC);
 
-            if ($data) {
-                $email = $data['email'];
-                $username = $data['username'];
-            } else {
-                echo json_encode([
-                    "success" => false,
-                    "message" => "No user found for the given session ID!"
-                ]);
-                exit();
-            }
+        if ($data) {
+            $email = $data['email'];
+            $username = $data['username'];
         } else {
             echo json_encode([
                 "success" => false,
-                "message" => "Error executing the query!"
+                "message" => "No user found for the given session ID!"
             ]);
             exit();
         }
-    } catch (PDOException $e) {
+    } else {
         echo json_encode([
             "success" => false,
-            "message" => "Error: " . $e->getMessage()
+            "message" => "Error executing the query!"
         ]);
         exit();
     }
+} catch (PDOException $e) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Error: " . $e->getMessage()
+    ]);
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -271,9 +271,9 @@
         }
 
         .btn-add-ad {
-                margin-left: 10px;
-                background-color: #0b5ed7!important;
-            }
+            margin-left: 10px;
+            background-color: #0b5ed7 !important;
+        }
 
         /**
  * Panels
@@ -347,6 +347,25 @@
             margin-top: 196px;
             border: 4px solid #f3f3f3;
         }
+
+
+        .thumbnail img {
+            border: 1px solid #ddd;
+            padding: 5px;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .thumbnail .remove-image {
+            cursor: pointer;
+            color: red;
+        }
+
+        #previewContainer .col-md-3 {
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 
@@ -358,7 +377,7 @@
 
             <!-- Menu -->
             <div class="" id="navbarSupportedContent">
-            <ul class="navbar-nav">
+                <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a style="text-decoration: none;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -449,6 +468,9 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Podgląd zdjęć -->
+                                <div id="previewContainer" class="row"></div>
 
                                 <!-- opis -->
                                 <div class="panel panel-default">
@@ -556,15 +578,15 @@
         &copy; 2024 Advertise Website
     </footer>
 
-<script>
-    
-</script>
+    <script>
+
+    </script>
 
     <!-- Poprawiony skrypt Bootstrap 5 (bez jQuery) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
-<script>
+    <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+    <script>
         $(document).ready(function() {
 
             //obsluga licznika opisu i bledu gdy jest nie poprawnej dlugosci
@@ -833,6 +855,92 @@
 
 
         });
+    </script>
+
+<script>
+$(document).ready(function () {
+    const maxFiles = 5; // Maksymalna liczba plików
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg']; // Dopuszczalne rozszerzenia
+    const previewContainer = $('#previewContainer'); // Kontener na podgląd
+    const inputFile = $('#images'); // Element input
+
+    inputFile.on('change', function (event) {
+        const dataTransfer = new DataTransfer(); // Tworzymy nowy obiekt DataTransfer
+        const files = Array.from(event.target.files); // Pobieramy pliki jako tablicę
+        let valid = true;
+
+        // Reset podglądu i komunikatów
+        previewContainer.empty();
+        $('#imageError').hide();
+
+        files.forEach((file) => {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(ext)) {
+                valid = false;
+            } else {
+                // Dodajemy plik do DataTransfer
+                dataTransfer.items.add(file);
+
+                // Generujemy podgląd
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewContainer.append(`
+                        <div class="col-md-3">
+                            <div class="thumbnail">
+                                <img src="${e.target.result}" alt="Image Preview" style="width:100px; height:125px;">
+                                <div class="remove-image text-center" style="cursor:pointer; color:red;">Remove</div>
+                            </div>
+                        </div>
+                    `);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Wyświetlamy błąd, jeśli pliki są nieprawidłowe
+        if (!valid) {
+            $('#imageError')
+                .text('Only jpg, jpeg, png, and svg files are allowed.')
+                .show();
+            return;
+        }
+
+        // Sprawdzamy limit plików
+        if (dataTransfer.files.length > maxFiles) {
+            $('#imageError')
+                .text(`You can upload a maximum of ${maxFiles} images.`)
+                .show();
+            return;
+        }
+
+        // Aktualizujemy pliki w elemencie input
+        inputFile[0].files = dataTransfer.files;
+        $('#imageCount').text(dataTransfer.files.length);
+    });
+
+    // Obsługa usuwania zdjęcia
+    previewContainer.on('click', '.remove-image', function () {
+        const index = $(this).closest('.col-md-3').index(); // Indeks usuwanego elementu
+        const dataTransfer = new DataTransfer();
+
+        // Kopiujemy wszystkie pliki z wyjątkiem usuniętego
+        Array.from(inputFile[0].files).forEach((file, i) => {
+            if (i !== index) {
+                dataTransfer.items.add(file);
+            }
+        });
+
+        // Aktualizujemy pliki w elemencie input
+        inputFile[0].files = dataTransfer.files;
+
+        // Usuwamy podgląd
+        $(this).closest('.col-md-3').remove();
+
+        // Aktualizujemy licznik
+        $('#imageCount').text(dataTransfer.files.length);
+    });
+});
+
     </script>
 </body>
 

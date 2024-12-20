@@ -13,20 +13,35 @@ try {
 }
 //losowe ogloszenia do promoted ads
 try {
-    $query = $db->prepare("SELECT id from ads WHERE active = 1");
+    // Pobranie wszystkich aktywnych ogłoszeń
+    $query = $db->prepare("SELECT id FROM ads WHERE active = 1");
     $query->execute();
     $allIds = $query->fetchAll(PDO::FETCH_COLUMN);
-    //Losowanie 8 id
-    $randomIds = array_rand(array_flip($allIds), 8);
-    $ids = implode(',', $randomIds);
-    //pobranie rekordow z tymi id
-    $query = $db->prepare("select * from ads where id in ($ids)");
-    $query->execute();
-    $randomAds = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($allIds)) {
+        // Jeśli brak ogłoszeń, zwróć pustą tablicę
+        $randomAds = [];
+    } else {
+        // Jeśli jest mniej niż 8 ogłoszeń, losuj tyle, ile jest
+        $count = min(8, count($allIds));
+        $randomIds = array_rand(array_flip($allIds), $count);
+        
+        if (!is_array($randomIds)) {
+            $randomIds = [$randomIds]; // Gdy tylko jedno ogłoszenie
+        }
+
+        $ids = implode(',', $randomIds);
+
+        // Pobranie ogłoszeń na podstawie wylosowanych ID
+        $query = $db->prepare("SELECT * FROM ads WHERE id IN ($ids)");
+        $query->execute();
+        $randomAds = $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Error fetching random ads.']);
     exit();
 }
+
 
 
 

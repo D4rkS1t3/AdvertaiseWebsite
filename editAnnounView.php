@@ -417,8 +417,8 @@ $phoneNumber = $adData['phone_number'] ?? '';
                         <div class="col-xs-12 col-sm-9">
                             <h3>Add announcement</h3>
                             <!-- Wyświetlanie błędów -->
-                            <form id="adForm" method="POST" enctype="multipart/form-data" action="addAnnoun.php" class="form-horizontal">
-
+                            <form id="adForm" method="POST" enctype="multipart/form-data" action="editAnnoun.php" class="form-horizontal">
+                                <input type="hidden" name="adId" value="<?= htmlspecialchars($adId) ?>">
                                 <div id="message" class="alert" style="display: none; margin-bottom: 15px;"></div>
 
                                 <!-- tytul, kat, cena -->
@@ -458,7 +458,7 @@ $phoneNumber = $adData['phone_number'] ?? '';
                                     </div>
                                 </div>
                                 <!-- image -->
-                                
+
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Existing Images</h3>
@@ -774,6 +774,121 @@ $phoneNumber = $adData['phone_number'] ?? '';
 
                 return isValid;
             }
+
+
+
+
+
+
+
+
+
+
+            const maxImages = 5; // Maksymalna liczba obrazów
+            let uploadedFiles = []; // Tablica przechowująca pliki do wysłania
+            let removedImages = []
+
+            // Funkcja aktualizująca licznik zdjęć
+            function updateImageCount() {
+                const existingImagesCount = document.querySelectorAll('.thumbnail img:not([hidden])').length;
+                const totalImagesCount = existingImagesCount + uploadedFiles.length;
+                $('#newImageCount').text(totalImagesCount);
+            }
+
+            $('#newImages').on('change', function(event) {
+                const files = Array.from(event.target.files); // Przekształcenie FileList na tablicę
+                const previewContainer = $('#previewContainer');
+                const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+
+                // Resetuj błędy
+                $('#newImageError').hide();
+
+                // Sprawdź bieżącą liczbę obrazów w podglądzie
+                const existingImagesCount = document.querySelectorAll('.thumbnail img:not([hidden])').length;
+
+                // Oblicz dostępne sloty na nowe zdjęcia
+                let remainingSlots = maxImages - existingImagesCount;
+
+                if (remainingSlots <= 0) {
+                    $('#newImageError')
+                        .text(`You can't add more images. Maximum allowed is ${maxImages}.`)
+                        .addClass("text-danger")
+                        .show();
+                    return;
+                }
+
+                // Filtrowanie i walidacja wybranych plików
+                const validFiles = files.filter((file) => {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    return allowedExtensions.includes(ext);
+                });
+
+                if (validFiles.length !== files.length) {
+                    $('#newImageError')
+                        .text('Some files have invalid extensions. Only jpg, jpeg, png, and svg are allowed.')
+                        .addClass("text-danger")
+                        .show();
+                    return;
+                }
+
+                // Jeśli liczba nowych obrazów przekracza dostępne sloty
+                if (validFiles.length > remainingSlots) {
+                    $('#newImageError')
+                        .text(`You can upload a maximum of ${remainingSlots} more images.`)
+                        .addClass("text-danger")
+                        .show();
+                    return;
+                }
+
+                // Zastąp pliki w tablicy uploadedFiles nowymi plikami
+                uploadedFiles = validFiles;
+
+                // Wyczyść poprzedni podgląd
+                previewContainer.empty();
+
+                // Wyświetl podgląd nowych obrazów
+                validFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewContainer.append(`
+                    <div class="col-md-3">
+                        <div class="thumbnail">
+                            <img src="${e.target.result}" alt="Preview" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                            <div class="caption text-center">
+                                <button type="button" class="btn btn-danger btn-sm remove-image" data-index="${index}">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                    };
+                    reader.readAsDataURL(file); // Odczyt pliku jako URL
+                });
+
+                // Aktualizuj licznik zdjęć
+                updateImageCount();
+
+                // Zresetuj input file, aby użytkownik mógł dodać te same pliki ponownie
+                this.value = '';
+            });
+
+            // Obsługa usuwania obrazów z podglądu
+            $(document).on('click', '.remove-image', function() {
+                const imageIndex = $(this).data('index');
+
+                // Usuń obraz z listy istniejących obrazów
+                if ($(this).closest('.thumbnail').find('img').attr('src').includes('./uploads/')) {
+                    removedImages.push(imageIndex); // Dodaj indeks do usunięcia
+                }
+
+                // Usuń obraz z podglądu
+                $(this).closest('.col-md-3').remove();
+
+                // Aktualizuj licznik zdjęć
+                updateImageCount();
+            });
+
+
+
             // Obsługa przesyłania formularza
             $("#submit").click(function(e) {
                 e.preventDefault(); // Zapobiega domyślnej akcji formularza
@@ -796,6 +911,14 @@ $phoneNumber = $adData['phone_number'] ?? '';
 
                 // Jeśli walidacja przejdzie, wysyłamy dane do serwera
                 const formData = new FormData($('#adForm')[0]);
+                
+                uploadedFiles.forEach((file, index) => {
+                    formData.append(`newImages[]`, file);
+                });
+
+                removedImages.forEach((index) => {
+                    formData.append(`removeImages[]`, index);
+                });
 
                 $.ajax({
                     url: 'editAnnoun.php',
@@ -812,7 +935,7 @@ $phoneNumber = $adData['phone_number'] ?? '';
                                 .addClass("alert-success")
                                 .show();
                             setTimeout(function() {
-                                window.location.href = response.redirect;
+                                window.location.href = './dashboard.php';
                             }, 3000);
                         } else {
                             $("#message")
@@ -840,121 +963,10 @@ $phoneNumber = $adData['phone_number'] ?? '';
 
 
 
-
+            updateImageCount();
 
 
         });
-    </script>
-    <script>
-$(document).ready(function () {
-    const maxImages = 5; // Maksymalna liczba obrazów
-    let uploadedFiles = []; // Tablica przechowująca pliki do wysłania
-
-    // Funkcja aktualizująca licznik zdjęć
-    function updateImageCount() {
-        const existingImagesCount = document.querySelectorAll('.thumbnail img:not([hidden])').length;
-        const totalImagesCount = existingImagesCount + uploadedFiles.length;
-        $('#newImageCount').text(totalImagesCount);
-    }
-
-    $('#newImages').on('change', function (event) {
-        const files = Array.from(event.target.files); // Przekształcenie FileList na tablicę
-        const previewContainer = $('#previewContainer');
-        const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
-
-        // Resetuj błędy
-        $('#newImageError').hide();
-
-        // Sprawdź bieżącą liczbę obrazów w podglądzie
-        const existingImagesCount = document.querySelectorAll('.thumbnail img:not([hidden])').length;
-
-        // Oblicz dostępne sloty na nowe zdjęcia
-        let remainingSlots = maxImages - existingImagesCount;
-
-        if (remainingSlots <= 0) {
-            $('#newImageError')
-                .text(`You can't add more images. Maximum allowed is ${maxImages}.`)
-                .addClass("text-danger")
-                .show();
-            return;
-        }
-
-        // Filtrowanie i walidacja wybranych plików
-        const validFiles = files.filter((file) => {
-            const ext = file.name.split('.').pop().toLowerCase();
-            return allowedExtensions.includes(ext);
-        });
-
-        if (validFiles.length !== files.length) {
-            $('#newImageError')
-                .text('Some files have invalid extensions. Only jpg, jpeg, png, and svg are allowed.')
-                .addClass("text-danger")
-                .show();
-            return;
-        }
-
-        // Jeśli liczba nowych obrazów przekracza dostępne sloty
-        if (validFiles.length > remainingSlots) {
-            $('#newImageError')
-                .text(`You can upload a maximum of ${remainingSlots} more images.`)
-                .addClass("text-danger")
-                .show();
-            return;
-        }
-
-        // Zastąp pliki w tablicy uploadedFiles nowymi plikami
-        uploadedFiles = validFiles;
-
-        // Wyczyść poprzedni podgląd
-        previewContainer.empty();
-
-        // Wyświetl podgląd nowych obrazów
-        validFiles.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewContainer.append(`
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <img src="${e.target.result}" alt="Preview" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
-                            <div class="caption text-center">
-                                <button type="button" class="btn btn-danger btn-sm remove-image" data-index="${index}">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                `);
-            };
-            reader.readAsDataURL(file); // Odczyt pliku jako URL
-        });
-
-        // Aktualizuj licznik zdjęć
-        updateImageCount();
-
-        // Zresetuj input file, aby użytkownik mógł dodać te same pliki ponownie
-        this.value = '';
-    });
-
-    // Obsługa usuwania obrazów z podglądu
-    $(document).on('click', '.remove-image', function () {
-        const imageIndex = $(this).data('index');
-
-        // Usuń obraz z tablicy uploadedFiles i podglądu
-        uploadedFiles.splice(imageIndex, 1);
-        $(this).closest('.col-md-3').remove();
-
-        // Aktualizuj licznik zdjęć
-        updateImageCount();
-    });
-
-    // Początkowa aktualizacja licznika zdjęć
-    updateImageCount();
-});
-
-
-
-
-
-
-
     </script>
 </body>
 

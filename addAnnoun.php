@@ -4,19 +4,16 @@ require 'db.php';
 require 'resizeImage.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     exit();
 }
 
 if (!isset($_SESSION['session_id'])) {
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'User not authenticated.']);
     exit();
 }
 
 $sessionID = $_SESSION['session_id'];
-$response = ['success' => false, 'message' => ''];
 
 try {
     $select = $db->prepare("SELECT id FROM users WHERE session_id = :session_id");
@@ -76,15 +73,23 @@ if (!empty($phoneNumber) && !preg_match('/^\+?[0-9]{9,15}$/', $phoneNumber)) {
 // Obsługa przesyłanych plików
 $uploadedImages = ['noImage.jpg'];
 $uploadDir = 'uploads/';
+$thumbSizes = [
+    ['folder' => 'thumb_150x113', 'width' => 150, 'height' => 113],
+    ['folder' => 'thumb_300x200', 'width' => 300, 'height' => 200],
+    ['folder' => 'thumb_600x400', 'width' => 600, 'height' => 400],
+    ['folder' => 'thumb_900x600', 'width' => 900, 'height' => 600],
+];
 $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+    foreach ($thumbSizes as $size) {
+        mkdir($uploadDir . $size['folder'], 0777, true);
+    }
+}
 
 if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
     $uploadedImages = [];
-
-    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
-        echo json_encode(['success' => false, 'message' => 'Unable to create upload directory.']);
-        exit();
-    }
 
     foreach ($_FILES['images']['name'] as $key => $imageName) {
         $imageTmpPath = $_FILES['images']['tmp_name'][$key];
@@ -102,10 +107,17 @@ if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
         }
 
         $newImageName = uniqid() . '.' . $imageExtension;
-        $imageDestination = $uploadDir . $newImageName;
+        $mainImagePath = $uploadDir . $newImageName;
 
-        if (optimizeImage($imageTmpPath, $imageDestination, 1920, 1080)) {
+        // Optimize main image
+        if (optimizeImage($imageTmpPath, $mainImagePath, 1920, 1080)) {
             $uploadedImages[] = $newImageName;
+
+            // Generate thumbnails
+            foreach ($thumbSizes as $size) {
+                $thumbPath = $uploadDir . $size['folder'] . '/' . $newImageName;
+                optimizeImage($imageTmpPath, $thumbPath, $size['width'], $size['height']);
+            }
         } else {
             echo json_encode(['success' => false, 'message' => "Error optimizing image: $imageName."]);
             exit();
@@ -113,6 +125,7 @@ if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
     }
 }
 
+// Zapisanie danych w bazie
 try {
     $stmt = $db->prepare("
         INSERT INTO ads (title, description, price, localization, category_id, image_path, user_id, phone_number, active) 
@@ -136,7 +149,6 @@ try {
         'message' => 'Advertisement added successfully!',
         'redirect' => 'dashboard.php'
     ]);
-
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
