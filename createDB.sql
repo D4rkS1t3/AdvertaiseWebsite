@@ -97,4 +97,4 @@ VALUES
     ('Cooking Classes', 'Learn to cook delicious meals.', 50.00, 'Katowice', 7, 'noImage.jpg', 5, '852741963', 1, 1),
     ('Dog Bed', 'Comfortable bed for your dog.', 40.00, 'Rzeszow', 11, 'noImage.jpg', 5, '951753486', 1, 0),
     ('Yoga Blocks', 'Essential for improving your yoga practice.', 20.00, 'Lublin', 10, 'noImage.jpg', 5, '357159284', 1, 1);
-
+ 
