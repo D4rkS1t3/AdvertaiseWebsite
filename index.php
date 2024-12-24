@@ -333,7 +333,7 @@ try {
                     <div class="mt-5">
                         <div class="row">
                             <?php foreach ($categories as $category): ?>
-                                <a class="col-4 col-sm-4 col-lg-2 mb-3 katEle" href="category.php?id=<?= htmlspecialchars($category['id']) ?>">
+                                <a class="col-4 col-sm-4 col-lg-2 mb-3 katEle" href="oferts.php?category=<?= htmlspecialchars($category['id']) ?>">
                                     <img style="width: 70px;" src="./img/kategorie/<?= strtolower($category['name']) ?>.png" alt="<?= htmlspecialchars($category['name']) ?>">
                                     <p><?= htmlspecialchars($category['name']) ?></p>
                                 </a>
@@ -356,7 +356,7 @@ try {
 
                             <!-- pierwszy ele -->
                             <?php foreach ($randomAds as $ad): ?>
-                                <a class="promoEle col-6 col-sm-6 col-md-4 col-lg-3 my-1" href="adDetails.php?id=<?= htmlspecialchars($ad['id']) ?>" style="text-decoration: none; color:black;">
+                                <a class="promoEle col-6 col-sm-6 col-md-4 col-lg-3 my-1" href="ofert.php?adId=<?= htmlspecialchars($ad['id']) ?>" style="text-decoration: none; color:black;">
                                     <div class="d-flex justify-content-center">
                                         <?php
                                         if (!empty($ad['image_path'])) {

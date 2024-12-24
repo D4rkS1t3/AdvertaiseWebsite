@@ -449,6 +449,17 @@ try {
                                                 <div id="priceError" class="text-danger" style="display: none; margin-top: 5px;"></div>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Condition*</label>
+                                            <div class="col-sm-10">
+                                                <select id="condition" name="condition" class="form-control" required>
+                                                    <option value="">Choose condition</option>
+                                                    <option value="0">New</option>
+                                                    <option value="1">Used</option>
+                                                </select>
+                                                <div id="conditionError" class="text-danger" style="display: none; margin-top: 5px;"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- image -->
@@ -755,6 +766,12 @@ try {
                         minLength: 1
                     },
                     {
+                        id: '#condition',
+                        errorId: '#conditionError',
+                        errorMessage: 'Condition is required.',
+                        minLength: 1
+                    },
+                    {
                         id: '#description',
                         errorId: '#descriptionError',
                         errorMessage: 'Description is too short. Add at least 40 characters.',
@@ -857,34 +874,34 @@ try {
         });
     </script>
 
-<script>
-$(document).ready(function () {
-    const maxFiles = 5; // Maksymalna liczba plików
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg']; // Dopuszczalne rozszerzenia
-    const previewContainer = $('#previewContainer'); // Kontener na podgląd
-    const inputFile = $('#images'); // Element input
+    <script>
+        $(document).ready(function() {
+            const maxFiles = 5; // Maksymalna liczba plików
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg']; // Dopuszczalne rozszerzenia
+            const previewContainer = $('#previewContainer'); // Kontener na podgląd
+            const inputFile = $('#images'); // Element input
 
-    inputFile.on('change', function (event) {
-        const dataTransfer = new DataTransfer(); // Tworzymy nowy obiekt DataTransfer
-        const files = Array.from(event.target.files); // Pobieramy pliki jako tablicę
-        let valid = true;
+            inputFile.on('change', function(event) {
+                const dataTransfer = new DataTransfer(); // Tworzymy nowy obiekt DataTransfer
+                const files = Array.from(event.target.files); // Pobieramy pliki jako tablicę
+                let valid = true;
 
-        // Reset podglądu i komunikatów
-        previewContainer.empty();
-        $('#imageError').hide();
+                // Reset podglądu i komunikatów
+                previewContainer.empty();
+                $('#imageError').hide();
 
-        files.forEach((file) => {
-            const ext = file.name.split('.').pop().toLowerCase();
-            if (!allowedExtensions.includes(ext)) {
-                valid = false;
-            } else {
-                // Dodajemy plik do DataTransfer
-                dataTransfer.items.add(file);
+                files.forEach((file) => {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(ext)) {
+                        valid = false;
+                    } else {
+                        // Dodajemy plik do DataTransfer
+                        dataTransfer.items.add(file);
 
-                // Generujemy podgląd
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    previewContainer.append(`
+                        // Generujemy podgląd
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewContainer.append(`
                         <div class="col-md-3">
                             <div class="thumbnail">
                                 <img src="${e.target.result}" alt="Image Preview" style="width:100px; height:125px;">
@@ -892,55 +909,54 @@ $(document).ready(function () {
                             </div>
                         </div>
                     `);
-                };
-                reader.readAsDataURL(file);
-            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Wyświetlamy błąd, jeśli pliki są nieprawidłowe
+                if (!valid) {
+                    $('#imageError')
+                        .text('Only jpg, jpeg, png, and svg files are allowed.')
+                        .show();
+                    return;
+                }
+
+                // Sprawdzamy limit plików
+                if (dataTransfer.files.length > maxFiles) {
+                    $('#imageError')
+                        .text(`You can upload a maximum of ${maxFiles} images.`)
+                        .show();
+                    return;
+                }
+
+                // Aktualizujemy pliki w elemencie input
+                inputFile[0].files = dataTransfer.files;
+                $('#imageCount').text(dataTransfer.files.length);
+            });
+
+            // Obsługa usuwania zdjęcia
+            previewContainer.on('click', '.remove-image', function() {
+                const index = $(this).closest('.col-md-3').index(); // Indeks usuwanego elementu
+                const dataTransfer = new DataTransfer();
+
+                // Kopiujemy wszystkie pliki z wyjątkiem usuniętego
+                Array.from(inputFile[0].files).forEach((file, i) => {
+                    if (i !== index) {
+                        dataTransfer.items.add(file);
+                    }
+                });
+
+                // Aktualizujemy pliki w elemencie input
+                inputFile[0].files = dataTransfer.files;
+
+                // Usuwamy podgląd
+                $(this).closest('.col-md-3').remove();
+
+                // Aktualizujemy licznik
+                $('#imageCount').text(dataTransfer.files.length);
+            });
         });
-
-        // Wyświetlamy błąd, jeśli pliki są nieprawidłowe
-        if (!valid) {
-            $('#imageError')
-                .text('Only jpg, jpeg, png, and svg files are allowed.')
-                .show();
-            return;
-        }
-
-        // Sprawdzamy limit plików
-        if (dataTransfer.files.length > maxFiles) {
-            $('#imageError')
-                .text(`You can upload a maximum of ${maxFiles} images.`)
-                .show();
-            return;
-        }
-
-        // Aktualizujemy pliki w elemencie input
-        inputFile[0].files = dataTransfer.files;
-        $('#imageCount').text(dataTransfer.files.length);
-    });
-
-    // Obsługa usuwania zdjęcia
-    previewContainer.on('click', '.remove-image', function () {
-        const index = $(this).closest('.col-md-3').index(); // Indeks usuwanego elementu
-        const dataTransfer = new DataTransfer();
-
-        // Kopiujemy wszystkie pliki z wyjątkiem usuniętego
-        Array.from(inputFile[0].files).forEach((file, i) => {
-            if (i !== index) {
-                dataTransfer.items.add(file);
-            }
-        });
-
-        // Aktualizujemy pliki w elemencie input
-        inputFile[0].files = dataTransfer.files;
-
-        // Usuwamy podgląd
-        $(this).closest('.col-md-3').remove();
-
-        // Aktualizujemy licznik
-        $('#imageCount').text(dataTransfer.files.length);
-    });
-});
-
     </script>
 </body>
 

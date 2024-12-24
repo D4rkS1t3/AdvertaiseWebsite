@@ -21,9 +21,7 @@ if (!$adId) {
     exit();
 }
 
-// Log incoming data for debugging
-file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
-file_put_contents('debug.log', print_r($_FILES, true), FILE_APPEND);
+
 
 try {
     $select = $db->prepare("SELECT id FROM users WHERE session_id = :session_id");
@@ -42,8 +40,9 @@ try {
 }
 
 // Validate and sanitize input fields
-$title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
+$title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
 $category = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
+$condition = filter_input(INPUT_POST, 'condition', FILTER_VALIDATE_INT);
 $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
 $localization = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
 $phoneNumber = filter_input(INPUT_POST, 'phoneNumber', FILTER_SANITIZE_STRING);
@@ -56,6 +55,11 @@ if (empty($title) || strlen($title) < 5) {
 
 if (empty($category)) {
     echo json_encode(['success' => false, 'message' => 'Category is required.']);
+    exit();
+}
+
+if (!isset($condition) || !in_array($condition, [0, 1], true)) {
+    echo json_encode(['success' => false, 'message' => 'Condition is invalid.']);
     exit();
 }
 
@@ -177,7 +181,7 @@ try {
     $update = $db->prepare("
         UPDATE ads 
         SET title = :title, description = :description, price = :price, localization = :localization, 
-            category_id = :category_id, image_path = :image_path, phone_number = :phone_number
+            category_id = :category_id, image_path = :image_path, phone_number = :phone_number, condit = :condition
         WHERE id = :adId AND user_id = :userId
     ");
 
@@ -190,7 +194,8 @@ try {
         ':image_path' => $finalImagePaths,
         ':phone_number' => $phoneNumber ?: null,
         ':adId' => $adId,
-        ':userId' => $userId
+        ':userId' => $userId,
+        ':condition' => $condition
     ]);
 
     echo json_encode(['success' => true, 'message' => 'Advertisement updated successfully!']);

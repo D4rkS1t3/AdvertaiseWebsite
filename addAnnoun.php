@@ -34,6 +34,7 @@ try {
 // Walidacja danych z formularza
 $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
 $category = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
+$condition = filter_input(INPUT_POST, 'condition', FILTER_VALIDATE_INT);
 $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
 $localization = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
 $phoneNumber = filter_input(INPUT_POST, 'phoneNumber', FILTER_SANITIZE_STRING);
@@ -47,6 +48,11 @@ if (empty($title) || strlen($title) < 5) {
 
 if (empty($category)) {
     echo json_encode(['success' => false, 'message' => 'Category is required.']);
+    exit();
+}
+
+if (!isset($condition) || !in_array($condition, [0, 1], true)) {
+    echo json_encode(['success' => false, 'message' => 'Condition is invalid.']);
     exit();
 }
 
@@ -128,14 +134,15 @@ if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
 // Zapisanie danych w bazie
 try {
     $stmt = $db->prepare("
-        INSERT INTO ads (title, description, price, localization, category_id, image_path, user_id, phone_number, active) 
-        VALUES (:title, :description, :price, :localization, :category_id, :image_path, :user_id, :phone_number, :active)
+        INSERT INTO ads (title, description, price, condit, localization, category_id, image_path, user_id, phone_number, active) 
+        VALUES (:title, :description, :price, :condition, :localization, :category_id, :image_path, :user_id, :phone_number, :active)
     ");
 
     $stmt->execute([
         ':title' => $title,
         ':description' => $description,
         ':price' => $price,
+        ':condition' => $condition,//0 new, 1 used
         ':localization' => $localization,
         ':category_id' => $category,
         ':image_path' => implode(',', $uploadedImages),

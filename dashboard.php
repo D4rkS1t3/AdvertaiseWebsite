@@ -309,8 +309,8 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 				<h3 class="my-1">Your Advertisement</h3>
 				<br>
 				<div class="alert alert-primary" role="alert">
-				<strong>Attention</strong>
-				<div class="panel-body">The process of buying and selling through Shipments Advertisement takes place in your Advertisment account. Ignore links sent outside the portal, e.g. via Whatsapp. Read more on our Blog.</div>
+					<strong>Attention</strong>
+					<div class="panel-body">The process of buying and selling through Shipments Advertisement takes place in your Advertisment account. Ignore links sent outside the portal, e.g. via Whatsapp. Read more on our Blog.</div>
 				</div>
 				<div class="btn-group d-flex w-100 my-3">
 					<a href="?tab=active" class="btn btn-light flex-fill <?php echo $activeTab === 'active' ? 'active' : ''; ?>">Active</a>
@@ -327,7 +327,7 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 							<?php foreach ($adsToDisplay as $ad): ?>
 								<!-- Card 1 -->
 								<div class="mb-3">
-									<div class="card featured p-3">
+									<a href="./ofert.php?adId=<?= $ad['id'] ?>" style="text-decoration: none;" data-id="<?= $ad['id'] ?>" class="card featured p-3">
 										<div class="row">
 											<div class="col-md-2 text-center">
 												<?php
@@ -350,30 +350,30 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 											<div style="margin-top: 1%;padding-right:4%" class="col-md-2 text-end">
 												<span class="price"><?= $ad['price'] ?> zł</span>
 												<?php if ($activeTab === 'active'): ?>
-												<div style="margin-top:10px;" class="actions">
-													<button class="btn btn-sm btn-primary btn-edit-ads" data-id = "<?= $ad['id'] ?>">
-														<i class="fa-solid fa-pen-to-square"></i>
-													</button>
-													<button class="btn btn-sm btn-danger btn-move-to-inactive" data-id="<?= $ad['id'] ?>">
-														<i class="fa-solid fa-arrow-right"></i>
-													</button>
-												</div>
+													<div style="margin-top:10px;" class="actions">
+														<button class="btn btn-sm btn-primary btn-edit-ads" data-id="<?= $ad['id'] ?>" >
+															<i class="fa-solid fa-pen-to-square"></i>
+														</button>
+														<button class="btn btn-sm btn-danger btn-move-to-inactive" data-id="<?= $ad['id'] ?>" >
+															<i class="fa-solid fa-arrow-right"></i>
+														</button>
+													</div>
 												<?php endif; ?>
 
 												<i class="bi bi-heart heart-icon"></i>
 											</div>
 										</div>
-									</div>
+									</a>
 								</div>
 							<?php endforeach; ?>
 						<?php else: ?>
 							<?php if ($activeTab === 'active'): ?>
-							<!-- Div z informacją o braku ogłoszeń dla aktywnych -->
-							<div class="alert alert-primary text-center" role="alert">
-								<h4 class="alert-heading">No ads!</h4>
-								<p>You don't have any ads in this section. Try adding a new ad!</p>
-								<a href="./addAnnounView.php" class="btn btn-primary mt-2">Add ads!</a>
-							</div>
+								<!-- Div z informacją o braku ogłoszeń dla aktywnych -->
+								<div class="alert alert-primary text-center" role="alert">
+									<h4 class="alert-heading">No ads!</h4>
+									<p>You don't have any ads in this section. Try adding a new ad!</p>
+									<a href="./addAnnounView.php" class="btn btn-primary mt-2">Add ads!</a>
+								</div>
 							<?php else: ?>
 								<!-- Div z informacją o braku ogłoszeń dla nieaktywnych -->
 								<div class="alert alert-primary text-center" role="alert">
@@ -408,58 +408,77 @@ $adsToDisplay = $activeTab === 'active' ? $activeAds : $unActiveAds;
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			//pobieramy przyciski wszystkie czerwone
-			const buttons = document.querySelectorAll('.btn-move-to-inactive');
+document.addEventListener('DOMContentLoaded', function () {
+    // Obsługa przycisków 'btn-move-to-inactive'
+    const moveToInactiveButtons = document.querySelectorAll('.btn-move-to-inactive');
 
-			buttons.forEach(button => {
-				button.addEventListener('click', function() {
-					//pobranie id ogloszenia z atrybuttu w przycisku
-					const adId = this.getAttribute('data-id');
-					
-					//wyswietlenie okna dialogowego\
-					if (confirm("Are you sure you want to move the ad to inactive?")) {
-						//wysylamy zadanie ajax
-						fetch('./moveToInactive.php', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json'
-							}, 
-							body: JSON.stringify({id:adId})
-						})
-						.then(response => response.json())
-						.then(data => {
-							if (data.success) {
-								alert("The ad has been moved to inactive.")
-								location.reload();
-							} else {
-								alert("Error occured: "+data.message)
-							}
-						})
-						.catch(error => {
-							console.error("Error:", error);
-							alert("An error occurred while transferring the ad.");
-						});
-					}
-				});
-			});
-			//obsluga przyciskow edytujacy analogicznie
-			const editButtons = document.querySelectorAll('.btn-edit-ads');
+    moveToInactiveButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Zapobiegaj domyślnemu zachowaniu przycisku
+            event.stopImmediatePropagation(); // Zapobiegaj dalszemu wykonywaniu innych handlerów
+            const adId = this.getAttribute('data-id');
 
-			editButtons.forEach(button => {
-				button.addEventListener('click', function() {
-					const adId = this.getAttribute('data-id');
-					if (adId) {
-						//przekierowanie do edycji ogloszenia
-						window.location.href = `editAnnounView.php?id=${adId}`;
-					} else {
-						alert("Ogloszenie nie ma przypisanego ID.");
-					}
-				})
-			})
-			
-		});
+            if (confirm("Are you sure you want to move the ad to inactive?")) {
+                fetch('./moveToInactive.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: adId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("The ad has been moved to inactive.");
+                            location.reload(); // Odświeżenie strony
+                        } else {
+                            alert("Error occurred: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("An error occurred while transferring the ad.");
+                    });
+            }
+        });
+    });
+
+    // Obsługa przycisków 'btn-edit-ads'
+    const editButtons = document.querySelectorAll('.btn-edit-ads');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Zapobiegaj domyślnemu zachowaniu przycisku
+            event.stopImmediatePropagation(); // Zapobiegaj dalszemu wykonywaniu innych handlerów
+            const adId = this.getAttribute('data-id');
+
+            if (adId) {
+                // Przekierowanie do strony edycji ogłoszenia
+                window.location.href = `editAnnounView.php?id=${adId}`;
+            } else {
+                alert("This ad does not have a valid ID.");
+            }
+        });
+    });
+
+    // Obsługa linków 'ad-link' (gdy kliknięto w link, a nie w przycisk)
+    const adLinks = document.querySelectorAll('.ad-link');
+
+    adLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            const adId = this.getAttribute('data-id');
+
+            if (adId) {
+                // Przejście do strony ogłoszenia
+                window.location.href = `./ofert.php?adId=${adId}`;
+            } else {
+                alert("Ad ID is missing.");
+            }
+        });
+    });
+});
 	</script>
+
 </body>
 
 </html>

@@ -1,74 +1,62 @@
 Array
 (
-    [adId] => 59
-    [title] => kotwhisky1
+    [title] => dddddddddddd
     [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    [price] => 2222
+    [condition] => 1
+    [description] => dwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwdwdw
     [location] => warsaw
     [contactPerson] => bartek
     [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
+    [phoneNumber] => 
 )
 Array
 (
-    [newImages] => Array
+    [images] => Array
         (
             [name] => Array
                 (
                     [0] => 
-                    [1] => AdobeStock_184260660-750x500.jpeg
                 )
 
             [type] => Array
                 (
                     [0] => 
-                    [1] => image/jpeg
                 )
 
             [tmp_name] => Array
                 (
                     [0] => 
-                    [1] => C:\xampp\tmp\php660A.tmp
                 )
 
             [error] => Array
                 (
                     [0] => 4
-                    [1] => 0
                 )
 
             [size] => Array
                 (
                     [0] => 0
-                    [1] => 117018
                 )
 
         )
 
 )
-Array
+1Array
 (
-    [adId] => 59
-    [title] => kotwhisky1
+    [title] => dddddddddddd
     [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    [price] => 2222
+    [condition] => 1
+    [description] => dwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwdwdw
     [location] => warsaw
     [contactPerson] => bartek
     [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-    [removeImages] => Array
-        (
-            [0] => 0
-            [1] => 2
-            [2] => 3
-        )
-
+    [phoneNumber] => 
 )
 Array
 (
-    [newImages] => Array
+    [images] => Array
         (
             [name] => Array
                 (
@@ -98,423 +86,13 @@ Array
         )
 
 )
-Array
+1Array
 (
-    [adId] => 59
-    [title] => kotwhisky1
+    [title] => dddddd
     [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    [location] => warsaw
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => alleyway-enchantment-eszter-mattionis-portrait-of-spanish-elegance.png
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/png
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\php7348.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 116486
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 59
-    [title] => kotwhisky1
-    [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    [location] => warsaw
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => alleyway-enchantment-eszter-mattionis-portrait-of-spanish-elegance.png
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/png
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\phpB90C.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 116486
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 59
-    [title] => kotwhisky1
-    [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    [location] => warsaw
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => Katie_Holmes_2011_(6024619824).jpg
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/jpeg
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\php95E2.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 565540
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 59
-    [title] => kotwhisky1
-    [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    [location] => warsaw
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => Katie_Holmes_2011_(6024619824).jpg
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/jpeg
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\phpBFF0.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 565540
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 59
-    [title] => kotwhisky1
-    [category] => 11
-    [price] => 111.00
-    [description] => aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    [location] => warsaw
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2222222222222
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 60
-    [title] => kotwhisky2
-    [category] => 11
-    [price] => 2222.00
-    [description] => weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => Puławy
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2332332332
-    [removeImages] => Array
-        (
-            [0] => 1
-            [1] => 2
-            [2] => 3
-            [3] => 4
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 60
-    [title] => kotwhisky2
-    [category] => 11
-    [price] => 2222.00
-    [description] => weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => Puławy
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2332332332
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => Katie_Holmes_2011_(6024619824).jpg
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/jpeg
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\php520F.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 565540
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 60
-    [title] => kotwhisky2
-    [category] => 11
-    [price] => 2222.00
-    [description] => weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => Puławy
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 2332332332
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => alleyway-enchantment-eszter-mattionis-portrait-of-spanish-elegance.png
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/png
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\phpC358.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 116486
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 62
-    [title] => aaaaaaaaaaaaaaaaa
-    [category] => 11
-    [price] => 222.00
-    [description] => eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    [price] => 22
+    [condition] => 0
+    [description] => dwwwwwwwwwwwwwwwwwwwwwwwwwwwdwwwwwwwwwwwwwww
     [location] => aaa
     [contactPerson] => bartek
     [email] => jsfjkja@gmail.com
@@ -522,298 +100,166 @@ Array
 )
 Array
 (
-    [newImages] => Array
+    [images] => Array
         (
             [name] => Array
                 (
                     [0] => 
-                    [1] => AdobeStock_184260660-750x500.jpeg
                 )
 
             [type] => Array
                 (
                     [0] => 
-                    [1] => image/jpeg
                 )
 
             [tmp_name] => Array
                 (
                     [0] => 
-                    [1] => C:\xampp\tmp\php944B.tmp
                 )
 
             [error] => Array
                 (
                     [0] => 4
-                    [1] => 0
                 )
 
             [size] => Array
                 (
                     [0] => 0
-                    [1] => 117018
                 )
 
         )
 
 )
-Array
+1Array
 (
-    [adId] => 62
-    [title] => aaaaaaaaaaaaaaaaa
+    [title] => aaaaaaaaaaaaaaaaaa
     [category] => 11
-    [price] => 222.00
-    [description] => eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => aaa
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 
-    [removeImages] => Array
-        (
-            [0] => 1
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 62
-    [title] => aaaaaaaaaaaaaaaaa
-    [category] => 11
-    [price] => 222.00
-    [description] => eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => aaa
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => alleyway-enchantment-eszter-mattionis-portrait-of-spanish-elegance.png
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/png
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\phpEB94.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 116486
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 62
-    [title] => aaaaaaaaaaaaaaaaa
-    [category] => 11
-    [price] => 222.00
-    [description] => eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => aaa
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 62
-    [title] => aaaaaaaaaaaaaaaaa
-    [category] => 11
-    [price] => 222.00
-    [description] => eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-    [location] => aaa
-    [contactPerson] => bartek
-    [email] => jsfjkja@gmail.com
-    [phoneNumber] => 
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
-)
-Array
-(
-    [newImages] => Array
-        (
-            [name] => Array
-                (
-                    [0] => 
-                    [1] => alleyway-enchantment-eszter-mattionis-portrait-of-spanish-elegance.png
-                )
-
-            [type] => Array
-                (
-                    [0] => 
-                    [1] => image/png
-                )
-
-            [tmp_name] => Array
-                (
-                    [0] => 
-                    [1] => C:\xampp\tmp\php4A3F.tmp
-                )
-
-            [error] => Array
-                (
-                    [0] => 4
-                    [1] => 0
-                )
-
-            [size] => Array
-                (
-                    [0] => 0
-                    [1] => 116486
-                )
-
-        )
-
-)
-Array
-(
-    [adId] => 65
-    [title] => spanish elegante
-    [category] => 6
-    [price] => 22.00
-    [description] => ewtttttttttttttttttttttttttttttttttttewew
+    [price] => 222
+    [condition] => 0
+    [description] => dssssssssssssssssssssssssssssssssssssssssss
     [location] => warsaw
     [contactPerson] => bartek
     [email] => jsfjkja@gmail.com
     [phoneNumber] => 
-    [removeImages] => Array
-        (
-            [0] => 0
-        )
-
 )
 Array
 (
-    [newImages] => Array
+    [images] => Array
         (
             [name] => Array
                 (
                     [0] => 
-                    [1] => Katie_Holmes_2011_(6024619824).jpg
                 )
 
             [type] => Array
                 (
                     [0] => 
-                    [1] => image/jpeg
                 )
 
             [tmp_name] => Array
                 (
                     [0] => 
-                    [1] => C:\xampp\tmp\php4D35.tmp
                 )
 
             [error] => Array
                 (
                     [0] => 4
-                    [1] => 0
                 )
 
             [size] => Array
                 (
                     [0] => 0
-                    [1] => 565540
                 )
 
         )
 
 )
+1Array
+(
+    [title] => aaaaaaaaaaa
+    [category] => 11
+    [price] => 111
+    [condition] => 0
+    [description] => dwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+    [location] => warsaw
+    [contactPerson] => bartek
+    [email] => jsfjkja@gmail.com
+    [phoneNumber] => 
+)
+Array
+(
+    [images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+1Array
+(
+    [title] => aaaaaaaaaaaa
+    [category] => 11
+    [price] => 1111
+    [condition] => 0
+    [description] => wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+    [location] => warsaw
+    [contactPerson] => bartek
+    [email] => jsfjkja@gmail.com
+    [phoneNumber] => 
+)
+Array
+(
+    [images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 5b76aaf906e70_o_medium.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => C:\xampp\tmp\php6F92.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 38034
+                )
+
+        )
+
+)
+1

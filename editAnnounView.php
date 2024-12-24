@@ -61,6 +61,7 @@ $localization = $adData['localization'];
 $categoryId = $adData['category_id'];
 $imagePaths = explode(',', $adData['image_path']);
 $phoneNumber = $adData['phone_number'] ?? '';
+$condition = $adData['condit'];
 
 
 
@@ -455,6 +456,17 @@ $phoneNumber = $adData['phone_number'] ?? '';
                                                 <div id="priceError" class="text-danger" style="display: none; margin-top: 5px;"></div>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Condition*</label>
+                                            <div class="col-sm-10">
+                                                <select id="condition" name="condition" class="form-control" required>
+                                                    <option value="">Choose condition</option>
+                                                    <option value="0" <?= 0 == $condition ? 'selected' : '' ?>>New</option>
+                                                    <option value="1" <?= 1 == $condition ? 'selected' : '' ?>>Used</option>
+                                                </select>
+                                             <div id="conditionError" class="text-danger" style="display: none; margin-top: 5px;"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- image -->
@@ -741,6 +753,12 @@ $phoneNumber = $adData['phone_number'] ?? '';
                         id: '#price',
                         errorId: '#priceError',
                         errorMessage: 'Price is required and must be a positive number.',
+                        minLength: 1
+                    },
+                    {
+                        id: '#condition',
+                        errorId: '#conditionError',
+                        errorMessage: 'Condition is required',
                         minLength: 1
                     },
                     {
