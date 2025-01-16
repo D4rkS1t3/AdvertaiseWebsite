@@ -334,7 +334,7 @@ try {
                         <div class="row">
                             <?php foreach ($categories as $category): ?>
                                 <a class="col-4 col-sm-4 col-lg-2 mb-3 katEle" href="oferts.php?category=<?= htmlspecialchars($category['id']) ?>">
-                                    <img style="width: 70px;" src="./img/kategorie/<?= strtolower($category['name']) ?>.png" alt="<?= htmlspecialchars($category['name']) ?>">
+                                    <img style="width: 70px;" src="./img/kategorie/<?= $category['name'] ?>.png" alt="<?= htmlspecialchars($category['name']) ?>">
                                     <p><?= htmlspecialchars($category['name']) ?></p>
                                 </a>
                             <?php endforeach; ?>
