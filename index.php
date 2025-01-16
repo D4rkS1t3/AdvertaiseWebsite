@@ -390,7 +390,7 @@ try {
                                         </div>
                                         <div class="m-4">
                                             <small style="font-size: 10px;"><?= htmlspecialchars(ucfirst($ad['localization'])) ?></small><br>
-                                            <small style="font-size: 10px;">Odświeżono dnia <?= date('d F Y', strtotime($ad['updated_at'])) ?></small>
+                                            <small style="font-size: 10px;">Refreshed on <?= date('d F Y', strtotime($ad['updated_at'])) ?></small>
                                         </div>
                                     </div>
                                 </a>

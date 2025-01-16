@@ -9,7 +9,7 @@ if (!isset($_SESSION['session_id'])) {
 
 $sessionID = $_SESSION['session_id'];
 
-$query = $db->prepare("SELECT username, email FROM users WHERE session_id = :session_id");
+$query = $db->prepare("SELECT username, email, password FROM users WHERE session_id = :session_id");
 $query->bindParam(':session_id', $sessionID);
 $query->execute();
 $row = $query->fetch(PDO::FETCH_ASSOC);
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $postOldPassword = trim($_POST['oldPassword']);
     $postNewPassword = trim($_POST['newPassword']);
     $repeatNewPassword = trim($_POST['repeatNewPassword']);
-    if (empty($postUsername) || empty($postEmail) || empty($postOldPassword) || empty($postNewPassword)) {
+    if (empty($postUsername) || empty($postEmail) || empty($postOldPassword) || empty($postNewPassword) || empty($repeatNewPassword)) {
         echo json_encode([
             "success" => false,
             "message" => "All fields are required"
@@ -562,13 +562,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                         <div class="form-group">
                                             <label for="password" class="col-sm-2 control-label">Password</label>
                                             <div class="col-sm-10">
-                                                <input type="password" id="deletePassword" class="form-control" placeholder="Enter your password" required>
+                                                <input type="password" id="deletePassword" name="deletePassword" class="form-control" placeholder="Enter your password" required>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="password" class="col-sm-2 control-label">Repeat password</label>
                                             <div class="col-sm-10">
-                                                <input type="password" id="repeatDeletePassword" class="form-control" placeholder="Repeat your password" required>
+                                                <input type="password" id="repeatDeletePassword" name="repeatDeletePassword" class="form-control" placeholder="Repeat your password" required>
                                             </div>
                                         </div>
                                         <div class="form-group">

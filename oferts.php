@@ -13,8 +13,8 @@ try {
 }
 
 //pobieramy parametry z get
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$location = isset($_GET['location']) ? trim($_GET['location']) : '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : null;
+$location = isset($_GET['location']) ? trim($_GET['location']) : null;
 $category = isset($_GET['category']) ? trim($_GET['category']) : null;
 $condition = isset($_GET['condition']) ? trim($_GET['condition']) : null;
 $priceFrom = isset($_GET['priceFrom']) ? trim($_GET['priceFrom']) : null;
@@ -45,12 +45,12 @@ if ($condition !== null) {
     $params[':condition'] = $condition;
 }
 
-if ($priceFrom !== null) {
+if ($priceFrom !== null && $priceFrom !== '') {
     $sql .= " AND price >= :priceFrom";
     $params[':priceFrom'] = $priceFrom;
 }
 
-if ($priceTo !== null) {
+if ($priceTo !== null && $priceTo !== '') {
     $sql .= " AND price <= :priceTo";
     $params[':priceTo'] = $priceTo;
 }
@@ -362,10 +362,10 @@ try {
                         <div class=" justify-content-center align-items-center mx-3 my-2">
                             <div class="row">
                                 <div class="col-lg-8 col-md-8 col-sm-8 p-0">
-                                    <input type="text" class="form-control search-slt" id="searchQuery" name="search" placeholder="Find something for you!">
+                                    <input type="text" class="form-control search-slt" id="searchQuery" value="<?= htmlspecialchars($search) ?>" name="search" placeholder="Find something for you!">
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-sm-2 p-0">
-                                    <input type="text" class="form-control search-slt" id="locationQuery" name="location" placeholder="Location">
+                                    <input type="text" class="form-control search-slt" value="<?= htmlspecialchars($location) ?>" id="locationQuery" name="location" placeholder="Location">
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-sm-2 p-0">
                                     <button type="submit" class="btn btn-light btn-search" id="searchButton">Search</button>
@@ -376,52 +376,52 @@ try {
                         <!-- filtry -->
                         <div class="my-4">
                             <div class="filter-section">
-                                <h5>Filtry</h5>
+                                <h5>Filters</h5>
                                 <div class="row g-3 align-items-center">
                                     <!-- Kategoria -->
                                     <div class="col-md-3">
-                                        <label for="category" class="form-label miniKat">Kategoria</label>
+                                        <label for="category" class="form-label miniKat">Category</label>
                                         <select id="category" name="category" class="form-control">
                                             <option value="">Choose category</option>
-                                            <?php foreach ($categories as $category): ?>
-                                                <option value="<?= htmlspecialchars($category['id']) ?>" <?= $category['id'] == $category ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($category['name']) ?>
+                                            <?php foreach ($categories as $cat): ?>
+                                                <option value="<?= htmlspecialchars($cat['id']) ?>" <?= $cat['id'] == $category ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($cat['name']) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <!-- Stan -->
                                     <div class="col-md-2">
-                                        <label for="condition" class="form-label miniKat">Stan</label>
-                                        <select class="form-select" id="condition">
-                                            <option selected>Wszystkie</option>
-                                            <option value="1">Nowe</option>
-                                            <option value="2">Używane</option>
+                                        <label for="condition" class="form-label miniKat">Condition</label>
+                                        <select class="form-select" id="condition" name="condition">
+                                            <option value="" <?= $condition === null ? 'selected' : '' ?>>All</option>
+                                            <option value="1" <?= $condition == '1' ? 'selected' : '' ?>>New</option>
+                                            <option value="2" <?= $condition == '2' ? 'selected' : '' ?>>Used</option>
                                         </select>
                                     </div>
                                     <!-- Cena -->
                                     <div class="col-md-2">
-                                        <label class="form-label miniKat">Cena</label>
+                                        <label class="form-label miniKat">Price</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control" placeholder="Od" id="priceFrom">
-                                            <input type="number" class="form-control" placeholder="Do" id="priceTo">
+                                            <input type="number" class="form-control" value="<?= htmlspecialchars($priceFrom) ?>" placeholder="From" id="priceFrom" name="priceFrom">
+                                            <input type="number" class="form-control" value="<?= htmlspecialchars($priceTo) ?>" placeholder="To" id="priceTo" name="priceTo">
                                         </div>
                                     </div>
                                     <!-- sortowanie -->
                                     <div class="col-md-3">
-                                        <label for="sortOrder" class="form-label miniKat">Sortowanie</label>
+                                        <label for="sortOrder" class="form-label miniKat">Sort</label>
                                         <select name="sortOrder" class="form-select">
-                                            <option value="price_asc">Price: Low to High</option>
-                                            <option value="price_desc">Price: High to Low</option>
-                                            <option value="date_desc">Newest</option>
-                                            <option value="date_asc">Oldest</option>
+                                            <option value="price_asc" <?= $sortOrder == 'price_asc' ? 'selected' : '' ?>>Price: Low to High</option>
+                                            <option value="price_desc" <?= $sortOrder == 'price_desc' ? 'selected' : '' ?>>Price: High to Low</option>
+                                            <option value="date_desc" <?= $sortOrder == 'date_desc' ? 'selected' : '' ?>>Newest</option>
+                                            <option value="date_asc" <?= $sortOrder == 'date_asc' ? 'selected' : '' ?>>Oldest</option>
                                         </select>
                                     </div>
                                     <!-- Wyczyść filtry -->
                                     <div class="col-md-2 filter-buttons">
                                         <!-- Puste miejsce imitujące label -->
                                         <div class="form-label-placeholder miniKat"></div>
-                                        <button type="button" class="btn btn-outline-secondary" id="clearFilters">Wyczyść filtry</button>
+                                        <button type="button" class="btn btn-outline-secondary" id="clearFilters">Clear Filters</button>
                                     </div>
                                 </div>
                             </div>
@@ -429,13 +429,13 @@ try {
                             <!-- Zakładki -->
                             <ul class="nav nav-tabs my-4">
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="#">Wszystkie</a>
+                                    <a class="nav-link active" href="#">All</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Firmowe</a>
+                                    <a class="nav-link" href="#">Bussines</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Prywatne</a>
+                                    <a class="nav-link" href="#">Private</a>
                                 </li>
                             </ul>
                         </div>

@@ -380,7 +380,7 @@ if ($adData['condit'] == 1) {
                                     <div class="d-flex align-items-center mb-3">
                                         <!-- Awatar i informacje -->
                                         <div class="me-3">
-                                            <img src="./uploads/noImage.jpg" alt="Awatar" style="width: 50px; height: 50px; border-radius: 50%; background-color: #ccc;">
+                                            <img src="./img/account-icon-template-vector.jpg" alt="Awatar" style="width: 50px; height: 50px; border-radius: 50%; background-color: #ccc;">
                                         </div>
                                         <div>
                                             <p class="mb-0 fw-bold" style="font-size: 14px;"><?= $userData['username'] ?></p>
@@ -437,7 +437,7 @@ if ($adData['condit'] == 1) {
                                     <h6 class="mb-3 text-uppercase" style="font-weight: bold; font-size: 14px; color: #333;">Businessperson</h6>
                                     <div class="d-flex align-items-center">
                                         <div class="me-3">
-                                            <img src="./uploads/thumb_150x113/noImage.jpg" class="rounded-circle me-3" style="width: 50px; height: 50px;" alt="Avatar">
+                                            <img src="./img/account-icon-template-vector.jpg" class="rounded-circle me-3" style="width: 50px; height: 50px;" alt="Avatar">
                                         </div>
                                         <div>
                                             <p class="mb-0" style="font-weight: bold;"><?= $userData['username'] ?></p>
